@@ -8,441 +8,481 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <style>
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-  :root {
-    --bg: #0d0d1a;
-    --bg2: #12121f;
-    --bg3: #1a1a2e;
-    --card: #16162a;
-    --border: #2a2a45;
-    --accent: #7c3aed;
-    --accent2: #a855f7;
-    --cyan: #06b6d4;
-    --pink: #ec4899;
-    --text: #f1f0ff;
-    --muted: #6b7280;
-    --success: #10b981;
-    --radius: 16px;
-    --radius-sm: 10px;
-  }
-  html, body {
-    height: 100%; background: var(--bg);
-    color: var(--text); font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-    overscroll-behavior: none; overflow: hidden;
-  }
-  #app { height: 100dvh; display: flex; flex-direction: column; }
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg: #0a0a14;
+  --bg2: #0f0f1c;
+  --bg3: #161625;
+  --card: #13132060;
+  --border: #ffffff12;
+  --accent: #7c3aed;
+  --accent2: #a855f7;
+  --cyan: #06b6d4;
+  --pink: #ec4899;
+  --green: #10b981;
+  --text: #f1f0ff;
+  --muted: #6b7280;
+  --radius: 18px;
+  --radius-sm: 12px;
+}
+html, body { height: 100%; background: var(--bg); color: var(--text); font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; overscroll-behavior: none; overflow: hidden; }
+#app { height: 100dvh; display: flex; flex-direction: column; }
 
-  /* HEADER */
-  .header {
-    display: flex; align-items: center; justify-content: space-between;
-    padding: 14px 20px 10px;
-    background: linear-gradient(180deg, #0d0d1a 0%, transparent 100%);
-    position: sticky; top: 0; z-index: 50;
-    border-bottom: 1px solid transparent;
-  }
-  .header-logo { display: flex; align-items: center; gap: 8px; }
-  .header-logo svg { width: 28px; height: 28px; }
-  .header-logo span { font-size: 20px; font-weight: 800; background: linear-gradient(135deg, #a855f7, #06b6d4); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-  .header-right { display: flex; gap: 10px; align-items: center; }
-  .icon-btn { background: var(--bg3); border: 1px solid var(--border); border-radius: 50%; width: 38px; height: 38px; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s; }
-  .icon-btn:active { transform: scale(0.92); background: var(--border); }
+/* SHIMMER */
+@keyframes shimmer { 0%{background-position:-400px 0} 100%{background-position:400px 0} }
+.shimmer { background: linear-gradient(90deg, var(--bg3) 25%, #1e1e35 50%, var(--bg3) 75%); background-size: 800px 100%; animation: shimmer 1.5s infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes pop { 0%{transform:scale(0.85);opacity:0} 70%{transform:scale(1.05)} 100%{transform:scale(1);opacity:1} }
+@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.5} }
 
-  /* NAV */
-  .nav {
-    display: flex; align-items: center; justify-content: space-around;
-    background: var(--bg2); border-top: 1px solid var(--border);
-    padding: 10px 0 max(10px, env(safe-area-inset-bottom));
-    flex-shrink: 0; position: relative; z-index: 50;
-  }
-  .nav-item { display: flex; flex-direction: column; align-items: center; gap: 4px; cursor: pointer; padding: 4px 16px; transition: all 0.2s; border-radius: 12px; }
-  .nav-item svg { width: 22px; height: 22px; stroke: var(--muted); transition: stroke 0.2s; }
-  .nav-item span { font-size: 11px; color: var(--muted); font-weight: 500; transition: color 0.2s; }
-  .nav-item.active svg { stroke: var(--accent2); }
-  .nav-item.active span { color: var(--accent2); }
-  .nav-create { background: linear-gradient(135deg, var(--accent), var(--cyan)); border-radius: 50%; width: 52px; height: 52px; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 4px 20px rgba(124,58,237,0.5); transition: all 0.2s; margin-top: -16px; border: 3px solid var(--bg2); }
-  .nav-create:active { transform: scale(0.9); }
-  .nav-create svg { width: 24px; height: 24px; stroke: white; }
+/* HEADER */
+.header { display:flex; align-items:center; justify-content:space-between; padding:16px 20px 12px; flex-shrink:0; }
+.logo { display:flex; align-items:center; gap:8px; }
+.logo-icon { width:32px; height:32px; background:linear-gradient(135deg,#7c3aed,#06b6d4); border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:18px; }
+.logo-text { font-size:22px; font-weight:900; background:linear-gradient(135deg,#a855f7,#06b6d4); -webkit-background-clip:text; -webkit-text-fill-color:transparent; letter-spacing:-0.5px; }
+.header-badges { display:flex; gap:8px; align-items:center; }
+.badge-free { background:linear-gradient(135deg,rgba(16,185,129,0.2),rgba(6,182,212,0.2)); border:1px solid rgba(16,185,129,0.4); color:#10b981; font-size:11px; font-weight:700; padding:5px 10px; border-radius:20px; letter-spacing:0.5px; }
+.badge-notif { width:36px; height:36px; background:var(--bg3); border:1px solid var(--border); border-radius:50%; display:flex; align-items:center; justify-content:center; cursor:pointer; font-size:16px; }
 
-  /* PAGES */
-  .page { flex: 1; overflow-y: auto; overflow-x: hidden; padding-bottom: 10px; }
-  .page::-webkit-scrollbar { display: none; }
+/* NAV */
+.nav { display:flex; align-items:center; justify-content:space-around; background:var(--bg2); border-top:1px solid var(--border); padding:8px 0 max(8px,env(safe-area-inset-bottom)); flex-shrink:0; backdrop-filter:blur(20px); }
+.nav-item { display:flex; flex-direction:column; align-items:center; gap:3px; cursor:pointer; padding:6px 14px; border-radius:14px; transition:all 0.2s; min-width:60px; }
+.nav-item .nav-ico { font-size:22px; transition:transform 0.2s; }
+.nav-item span { font-size:10px; color:var(--muted); font-weight:600; transition:color 0.2s; }
+.nav-item.active .nav-ico { transform:scale(1.1); }
+.nav-item.active span { color:var(--accent2); }
+.nav-item.active { background:rgba(168,85,247,0.1); }
+.nav-create { background:linear-gradient(135deg,var(--accent),var(--cyan)); border-radius:50%; width:54px; height:54px; display:flex; align-items:center; justify-content:center; cursor:pointer; box-shadow:0 4px 24px rgba(124,58,237,0.5); transition:all 0.2s; margin-top:-18px; border:3px solid var(--bg2); font-size:26px; }
+.nav-create:active { transform:scale(0.9); }
 
-  /* HOME PAGE */
-  .home-hero {
-    margin: 16px; padding: 24px; border-radius: 20px;
-    background: linear-gradient(135deg, #1e1040 0%, #0f1a30 100%);
-    border: 1px solid rgba(124,58,237,0.3);
-    position: relative; overflow: hidden;
-  }
-  .home-hero::before {
-    content: ''; position: absolute; inset: 0;
-    background: radial-gradient(circle at 70% 30%, rgba(168,85,247,0.15) 0%, transparent 60%);
-  }
-  .home-hero-tag { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px; color: var(--accent2); margin-bottom: 10px; }
-  .home-hero h1 { font-size: 26px; font-weight: 800; line-height: 1.2; margin-bottom: 8px; }
-  .home-hero h1 span { background: linear-gradient(135deg, #a855f7, #06b6d4); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-  .home-hero p { font-size: 14px; color: #9ca3af; margin-bottom: 18px; }
-  .hero-btn { display: inline-flex; align-items: center; gap: 8px; background: linear-gradient(135deg, var(--accent), var(--cyan)); color: white; border: none; padding: 12px 22px; border-radius: 50px; font-size: 15px; font-weight: 600; cursor: pointer; transition: all 0.2s; }
-  .hero-btn:active { transform: scale(0.96); }
+/* PAGES */
+.page { flex:1; overflow-y:auto; overflow-x:hidden; padding-bottom:16px; -webkit-overflow-scrolling:touch; }
+.page::-webkit-scrollbar { display:none; }
 
-  .section-title { font-size: 16px; font-weight: 700; margin: 20px 16px 12px; display: flex; align-items: center; gap: 6px; }
+/* ===== HOME ===== */
+.home-tabs { display:flex; gap:8px; padding:4px 16px 16px; overflow-x:auto; scrollbar-width:none; }
+.home-tabs::-webkit-scrollbar { display:none; }
+.home-tab { flex-shrink:0; padding:8px 16px; border-radius:50px; font-size:13px; font-weight:600; cursor:pointer; transition:all 0.2s; border:1px solid var(--border); color:var(--muted); background:var(--bg3); }
+.home-tab.active { background:linear-gradient(135deg,var(--accent),var(--accent2)); color:white; border-color:transparent; }
 
-  /* FEED GRID */
-  .feed-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; padding: 0 16px; }
-  .feed-card { border-radius: var(--radius); overflow: hidden; background: var(--card); border: 1px solid var(--border); cursor: pointer; transition: transform 0.2s; aspect-ratio: 3/4; position: relative; }
-  .feed-card:active { transform: scale(0.97); }
-  .feed-card img { width: 100%; height: 100%; object-fit: cover; }
-  .feed-card-loading { width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; }
-  .feed-card-loading .spinner { width: 28px; height: 28px; border: 3px solid var(--border); border-top-color: var(--accent2); border-radius: 50%; animation: spin 0.8s linear infinite; }
-  .feed-card-info { position: absolute; bottom: 0; left: 0; right: 0; padding: 12px 10px 8px; background: linear-gradient(transparent, rgba(0,0,0,0.8)); }
-  .feed-card-info p { font-size: 11px; color: #e5e7eb; font-weight: 500; line-height: 1.3; }
-  .feed-card-info .style-tag { display: inline-block; background: rgba(124,58,237,0.7); color: white; font-size: 9px; font-weight: 700; padding: 2px 6px; border-radius: 4px; margin-bottom: 4px; }
+.hero-banner { margin:12px 16px; padding:22px 20px; border-radius:22px; background:linear-gradient(135deg,#1a0a3a 0%,#0a1a3a 100%); border:1px solid rgba(124,58,237,0.25); position:relative; overflow:hidden; }
+.hero-banner::after { content:''; position:absolute; top:-40px; right:-40px; width:160px; height:160px; background:radial-gradient(circle,rgba(168,85,247,0.3) 0%,transparent 70%); pointer-events:none; }
+.hero-tag { font-size:10px; font-weight:800; text-transform:uppercase; letter-spacing:2px; color:var(--accent2); margin-bottom:8px; }
+.hero-title { font-size:24px; font-weight:900; line-height:1.2; margin-bottom:6px; }
+.hero-title em { font-style:normal; background:linear-gradient(135deg,#a855f7,#06b6d4); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
+.hero-sub { font-size:13px; color:#9ca3af; margin-bottom:16px; line-height:1.5; }
+.hero-actions { display:flex; gap:10px; }
+.btn-primary { display:inline-flex; align-items:center; gap:6px; background:linear-gradient(135deg,var(--accent),var(--cyan)); color:white; border:none; padding:11px 20px; border-radius:50px; font-size:14px; font-weight:700; cursor:pointer; transition:all 0.2s; }
+.btn-primary:active { transform:scale(0.95); opacity:0.9; }
+.btn-outline { display:inline-flex; align-items:center; gap:6px; background:rgba(255,255,255,0.05); color:var(--text); border:1px solid var(--border); padding:11px 16px; border-radius:50px; font-size:14px; font-weight:600; cursor:pointer; }
 
-  /* CREATE PAGE */
-  .create-page { padding: 16px; }
-  .create-title { font-size: 24px; font-weight: 800; margin-bottom: 4px; }
-  .create-subtitle { color: var(--muted); font-size: 14px; margin-bottom: 20px; }
+.section-hdr { display:flex; align-items:center; justify-content:space-between; padding:0 16px; margin-bottom:12px; }
+.section-hdr h2 { font-size:17px; font-weight:800; display:flex; align-items:center; gap:6px; }
+.section-hdr a { font-size:12px; color:var(--accent2); font-weight:600; cursor:pointer; }
 
-  .prompt-box { background: var(--card); border: 2px solid var(--border); border-radius: var(--radius); padding: 16px; margin-bottom: 16px; transition: border-color 0.2s; }
-  .prompt-box:focus-within { border-color: var(--accent); }
-  .prompt-box textarea {
-    width: 100%; background: none; border: none; outline: none; color: var(--text);
-    font-size: 15px; line-height: 1.5; resize: none; min-height: 80px; font-family: inherit;
-  }
-  .prompt-box textarea::placeholder { color: var(--muted); }
-  .prompt-actions { display: flex; justify-content: space-between; align-items: center; margin-top: 10px; }
-  .prompt-hint { font-size: 12px; color: var(--muted); }
-  .enhance-btn { background: rgba(168,85,247,0.15); border: 1px solid rgba(168,85,247,0.3); color: var(--accent2); padding: 7px 14px; border-radius: 20px; font-size: 13px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 5px; transition: all 0.2s; }
-  .enhance-btn:active { background: rgba(168,85,247,0.3); }
-  .enhance-btn.loading { opacity: 0.6; }
+/* FEED GRID - fixed images */
+.feed-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; padding:0 16px; }
+.feed-card { border-radius:var(--radius); overflow:hidden; background:var(--bg3); border:1px solid var(--border); cursor:pointer; aspect-ratio:3/4; position:relative; transition:transform 0.15s; }
+.feed-card:active { transform:scale(0.97); }
+.feed-card img { width:100%; height:100%; object-fit:cover; display:block; }
+.feed-card-label { position:absolute; bottom:0; left:0; right:0; padding:20px 10px 10px; background:linear-gradient(transparent,rgba(0,0,0,0.85)); }
+.feed-card-label .tag { display:inline-block; background:rgba(124,58,237,0.8); color:white; font-size:9px; font-weight:800; padding:2px 7px; border-radius:5px; margin-bottom:4px; text-transform:uppercase; letter-spacing:0.5px; }
+.feed-card-label p { font-size:11px; color:#e5e7eb; font-weight:600; line-height:1.3; }
+.feed-card-shimmer { width:100%; height:100%; }
 
-  .section-label { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: var(--muted); margin-bottom: 10px; }
+/* ===== CREATE ===== */
+.create-page { padding:16px; }
+.create-hero { text-align:center; padding:20px 0 24px; }
+.create-hero h2 { font-size:22px; font-weight:900; margin-bottom:6px; }
+.create-hero p { font-size:13px; color:var(--muted); }
 
-  /* STYLE GRID */
-  .style-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 20px; }
-  .style-card {
-    border-radius: var(--radius-sm); padding: 14px 10px; text-align: center; cursor: pointer;
-    background: var(--card); border: 2px solid var(--border); transition: all 0.2s;
-  }
-  .style-card:active { transform: scale(0.95); }
-  .style-card.selected { border-color: var(--accent); background: rgba(124,58,237,0.1); }
-  .style-card .emoji { font-size: 26px; display: block; margin-bottom: 6px; }
-  .style-card .name { font-size: 12px; font-weight: 600; color: #d1d5db; }
+.style-scroll { display:flex; gap:8px; overflow-x:auto; scrollbar-width:none; padding-bottom:4px; margin-bottom:20px; }
+.style-scroll::-webkit-scrollbar { display:none; }
+.style-chip { flex-shrink:0; padding:8px 14px; border-radius:50px; font-size:12px; font-weight:700; cursor:pointer; border:1px solid var(--border); background:var(--bg3); color:var(--muted); transition:all 0.2s; }
+.style-chip.active { background:rgba(124,58,237,0.25); border-color:var(--accent2); color:var(--accent2); }
 
-  /* SIZE OPTIONS */
-  .size-row { display: flex; gap: 8px; margin-bottom: 20px; flex-wrap: wrap; }
-  .size-chip { padding: 8px 16px; border-radius: 20px; background: var(--card); border: 1px solid var(--border); font-size: 13px; cursor: pointer; transition: all 0.2s; font-weight: 500; }
-  .size-chip.selected { background: rgba(124,58,237,0.2); border-color: var(--accent); color: var(--accent2); }
-  .size-chip:active { transform: scale(0.95); }
+.prompt-box { background:var(--bg3); border:1px solid var(--border); border-radius:var(--radius); padding:14px; margin-bottom:12px; transition:border-color 0.2s; }
+.prompt-box:focus-within { border-color:var(--accent2); }
+.prompt-box textarea { width:100%; background:transparent; border:none; outline:none; color:var(--text); font-size:15px; line-height:1.6; resize:none; min-height:80px; font-family:inherit; }
+.prompt-box textarea::placeholder { color:var(--muted); }
+.prompt-actions { display:flex; gap:8px; align-items:center; justify-content:space-between; margin-top:10px; }
+.prompt-actions-left { display:flex; gap:8px; }
+.small-btn { padding:7px 13px; border-radius:50px; font-size:12px; font-weight:600; cursor:pointer; border:1px solid var(--border); background:var(--bg2); color:var(--muted); display:flex; align-items:center; gap:4px; transition:all 0.2s; }
+.small-btn:active { transform:scale(0.95); }
+.small-btn.accent { border-color:rgba(168,85,247,0.4); color:var(--accent2); background:rgba(168,85,247,0.1); }
 
-  /* GENERATE BUTTON */
-  .gen-btn { width: 100%; padding: 16px; border-radius: var(--radius); background: linear-gradient(135deg, var(--accent), var(--cyan)); border: none; color: white; font-size: 16px; font-weight: 700; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 24px; }
-  .gen-btn:active { transform: scale(0.98); opacity: 0.9; }
-  .gen-btn:disabled { opacity: 0.5; cursor: not-allowed; }
-  .gen-btn .spinner { width: 20px; height: 20px; border: 3px solid rgba(255,255,255,0.3); border-top-color: white; border-radius: 50%; animation: spin 0.8s linear infinite; }
+/* Image upload in create */
+.img-upload-area { border:2px dashed var(--border); border-radius:var(--radius); padding:20px; text-align:center; cursor:pointer; transition:all 0.2s; margin-bottom:12px; background:var(--bg3); }
+.img-upload-area:active, .img-upload-area.dragover { border-color:var(--accent2); background:rgba(124,58,237,0.08); }
+.img-upload-area .upload-ico { font-size:36px; margin-bottom:8px; }
+.img-upload-area p { font-size:13px; color:var(--muted); }
+.img-upload-area .upload-hint { font-size:11px; color:var(--muted); margin-top:4px; opacity:0.7; }
+.img-preview-wrap { position:relative; margin-bottom:12px; border-radius:var(--radius); overflow:hidden; }
+.img-preview-wrap img { width:100%; max-height:240px; object-fit:cover; border-radius:var(--radius); display:block; }
+.img-preview-wrap .remove-img { position:absolute; top:8px; right:8px; background:rgba(0,0,0,0.7); color:white; border:none; width:30px; height:30px; border-radius:50%; font-size:14px; cursor:pointer; display:flex; align-items:center; justify-content:center; }
 
-  /* RESULT */
-  .result-box { border-radius: var(--radius); overflow: hidden; background: var(--card); border: 1px solid var(--border); margin-bottom: 20px; }
-  .result-img { width: 100%; display: block; }
-  .result-actions { display: flex; gap: 10px; padding: 14px; }
-  .result-btn { flex: 1; padding: 12px; border-radius: var(--radius-sm); border: none; font-size: 14px; font-weight: 600; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; justify-content: center; gap: 6px; }
-  .result-btn:active { transform: scale(0.95); }
-  .result-btn.primary { background: linear-gradient(135deg, var(--accent), var(--cyan)); color: white; }
-  .result-btn.secondary { background: var(--bg3); border: 1px solid var(--border); color: var(--text); }
+.size-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:8px; margin-bottom:16px; }
+.size-btn { padding:10px 6px; border-radius:12px; border:1px solid var(--border); background:var(--bg3); cursor:pointer; text-align:center; transition:all 0.2s; }
+.size-btn.active { border-color:var(--accent2); background:rgba(124,58,237,0.15); }
+.size-btn .ratio { font-size:18px; margin-bottom:2px; }
+.size-btn .label { font-size:10px; color:var(--muted); font-weight:600; }
+.size-btn.active .label { color:var(--accent2); }
 
-  /* EFFECTS PAGE */
-  .effects-page { padding: 16px; }
-  .effects-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
-  .effect-card { border-radius: var(--radius-sm); overflow: hidden; background: var(--card); border: 1px solid var(--border); cursor: pointer; transition: all 0.2s; aspect-ratio: 1; position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; }
-  .effect-card:active { transform: scale(0.94); }
-  .effect-card.selected { border-color: var(--accent); border-width: 2px; }
-  .effect-card canvas { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; border-radius: var(--radius-sm); }
-  .effect-card .effect-label { position: relative; z-index: 2; font-size: 11px; font-weight: 700; color: white; text-shadow: 0 1px 4px rgba(0,0,0,0.8); margin-top: auto; padding: 8px; }
-  .effect-card .no-img { font-size: 24px; }
-  .upload-area { border: 2px dashed var(--border); border-radius: var(--radius); padding: 32px 20px; text-align: center; cursor: pointer; margin-bottom: 16px; transition: all 0.2s; }
-  .upload-area:active { border-color: var(--accent); background: rgba(124,58,237,0.05); }
-  .upload-area .upload-icon { font-size: 40px; margin-bottom: 10px; }
-  .upload-area p { color: var(--muted); font-size: 14px; }
-  .upload-area strong { color: var(--text); }
-  .apply-effect-btn { width: 100%; padding: 15px; border-radius: var(--radius); background: linear-gradient(135deg, var(--pink), var(--accent)); border: none; color: white; font-size: 15px; font-weight: 700; cursor: pointer; margin-top: 16px; transition: all 0.2s; }
-  .apply-effect-btn:active { transform: scale(0.98); }
-  .apply-effect-btn:disabled { opacity: 0.4; cursor: not-allowed; }
-  .canvas-hidden { display: none; }
+.gen-btn { width:100%; padding:16px; border-radius:50px; background:linear-gradient(135deg,var(--accent),var(--cyan)); color:white; font-size:16px; font-weight:800; border:none; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:8px; transition:all 0.2s; letter-spacing:0.3px; box-shadow:0 4px 24px rgba(124,58,237,0.4); }
+.gen-btn:active { transform:scale(0.97); }
+.gen-btn:disabled { opacity:0.6; cursor:not-allowed; }
 
-  /* GALLERY PAGE */
-  .gallery-page { padding: 16px; }
-  .gallery-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-  .gallery-item { border-radius: var(--radius-sm); overflow: hidden; aspect-ratio: 1; background: var(--card); border: 1px solid var(--border); position: relative; cursor: pointer; }
-  .gallery-item img { width: 100%; height: 100%; object-fit: cover; }
-  .gallery-item .del-btn { position: absolute; top: 6px; right: 6px; background: rgba(0,0,0,0.6); border: none; color: white; width: 26px; height: 26px; border-radius: 50%; font-size: 14px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
-  .empty-state { text-align: center; padding: 60px 20px; color: var(--muted); }
-  .empty-state .empty-icon { font-size: 60px; margin-bottom: 16px; }
-  .empty-state p { font-size: 15px; }
-  .empty-state strong { color: var(--text); display: block; font-size: 18px; margin-bottom: 6px; }
+/* RESULT */
+.result-wrap { margin-top:20px; animation:pop 0.4s ease; }
+.result-img-wrap { border-radius:var(--radius); overflow:hidden; position:relative; margin-bottom:12px; }
+.result-img-wrap img { width:100%; display:block; border-radius:var(--radius); }
+.result-img-wrap .result-badge { position:absolute; top:10px; left:10px; background:rgba(16,185,129,0.9); color:white; font-size:10px; font-weight:800; padding:4px 10px; border-radius:20px; letter-spacing:0.5px; }
+.result-actions { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
+.result-act-btn { padding:12px; border-radius:14px; border:none; cursor:pointer; font-size:13px; font-weight:700; display:flex; align-items:center; justify-content:center; gap:6px; transition:all 0.2s; }
+.result-act-btn:active { transform:scale(0.96); }
+.result-act-btn.save { background:linear-gradient(135deg,var(--accent),var(--accent2)); color:white; }
+.result-act-btn.download { background:var(--bg3); border:1px solid var(--border); color:var(--text); }
+.result-act-btn.share { background:rgba(6,182,212,0.15); border:1px solid rgba(6,182,212,0.3); color:var(--cyan); }
+.result-act-btn.remix { background:rgba(236,72,153,0.15); border:1px solid rgba(236,72,153,0.3); color:var(--pink); }
 
-  /* EXPLORE PAGE */
-  .explore-page { padding: 16px; }
-  .explore-search { display: flex; align-items: center; gap: 10px; background: var(--card); border: 1px solid var(--border); border-radius: 50px; padding: 12px 16px; margin-bottom: 20px; }
-  .explore-search input { flex: 1; background: none; border: none; outline: none; color: var(--text); font-size: 15px; }
-  .explore-search input::placeholder { color: var(--muted); }
-  .explore-categories { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 12px; margin-bottom: 12px; }
-  .explore-categories::-webkit-scrollbar { display: none; }
-  .cat-chip { flex-shrink: 0; padding: 8px 16px; border-radius: 20px; background: var(--card); border: 1px solid var(--border); font-size: 13px; cursor: pointer; transition: all 0.2s; font-weight: 500; }
-  .cat-chip.active { background: linear-gradient(135deg, var(--accent), var(--cyan)); border-color: transparent; color: white; }
-  .explore-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-  .explore-card { border-radius: var(--radius-sm); overflow: hidden; background: var(--card); border: 1px solid var(--border); aspect-ratio: 1; position: relative; }
-  .explore-card img { width: 100%; height: 100%; object-fit: cover; }
-  .explore-card-overlay { position: absolute; bottom: 0; left: 0; right: 0; padding: 20px 10px 8px; background: linear-gradient(transparent, rgba(0,0,0,0.7)); }
-  .explore-card-overlay span { font-size: 11px; color: #e5e7eb; font-weight: 500; }
+.generating-state { text-align:center; padding:40px 20px; }
+.gen-spinner { width:56px; height:56px; border:4px solid var(--border); border-top-color:var(--accent2); border-radius:50%; animation:spin 0.8s linear infinite; margin:0 auto 16px; }
+.gen-status { font-size:15px; font-weight:600; color:var(--text); margin-bottom:6px; }
+.gen-sub { font-size:12px; color:var(--muted); }
+.gen-progress { width:100%; height:3px; background:var(--bg3); border-radius:2px; margin-top:16px; overflow:hidden; }
+.gen-progress-bar { height:100%; background:linear-gradient(90deg,var(--accent),var(--cyan)); border-radius:2px; transition:width 0.3s; animation:pulse 2s infinite; }
 
-  /* PROFILE PAGE */
-  .profile-page { padding: 16px; }
-  .profile-hero { border-radius: 20px; background: linear-gradient(135deg, #1e1040, #0f1a30); border: 1px solid rgba(124,58,237,0.3); padding: 28px 20px; text-align: center; margin-bottom: 20px; }
-  .avatar { width: 80px; height: 80px; border-radius: 50%; background: linear-gradient(135deg, var(--accent), var(--cyan)); display: flex; align-items: center; justify-content: center; margin: 0 auto 14px; font-size: 32px; }
-  .profile-name { font-size: 22px; font-weight: 800; margin-bottom: 4px; }
-  .profile-bio { color: var(--muted); font-size: 14px; margin-bottom: 18px; }
-  .profile-stats { display: flex; justify-content: center; gap: 32px; }
-  .stat { text-align: center; }
-  .stat-num { font-size: 22px; font-weight: 800; }
-  .stat-label { font-size: 12px; color: var(--muted); }
-  .profile-section { margin-bottom: 20px; }
-  .profile-section-title { font-size: 14px; font-weight: 700; color: var(--muted); margin-bottom: 12px; text-transform: uppercase; letter-spacing: 1px; }
-  .setting-row { display: flex; align-items: center; justify-content: space-between; padding: 16px; background: var(--card); border: 1px solid var(--border); border-radius: var(--radius-sm); margin-bottom: 8px; cursor: pointer; }
-  .setting-row:active { background: var(--bg3); }
-  .setting-row-left { display: flex; align-items: center; gap: 12px; }
-  .setting-icon { width: 36px; height: 36px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 18px; }
-  .setting-label { font-size: 15px; font-weight: 500; }
-  .setting-right { color: var(--muted); font-size: 13px; }
-  .toggle { width: 44px; height: 26px; border-radius: 13px; background: var(--border); position: relative; cursor: pointer; transition: background 0.2s; }
-  .toggle.on { background: var(--accent); }
-  .toggle::after { content: ''; position: absolute; width: 20px; height: 20px; background: white; border-radius: 50%; top: 3px; left: 3px; transition: left 0.2s; }
-  .toggle.on::after { left: 21px; }
+/* ===== EFFECTS ===== */
+.effects-page { padding:16px; }
+.effects-upload { border:2px dashed var(--border); border-radius:var(--radius); padding:28px 20px; text-align:center; cursor:pointer; transition:all 0.2s; background:var(--bg3); margin-bottom:16px; }
+.effects-upload:active { border-color:var(--accent2); background:rgba(124,58,237,0.08); }
+.effects-upload .up-ico { font-size:44px; margin-bottom:10px; }
+.effects-upload h3 { font-size:16px; font-weight:700; margin-bottom:4px; }
+.effects-upload p { font-size:13px; color:var(--muted); }
 
-  /* TOAST */
-  .toast-container { position: fixed; top: 60px; left: 50%; transform: translateX(-50%); z-index: 999; display: flex; flex-direction: column; gap: 8px; width: calc(100% - 32px); max-width: 380px; pointer-events: none; }
-  .toast { background: #1e1e2e; border: 1px solid var(--border); border-radius: 12px; padding: 14px 16px; font-size: 14px; font-weight: 500; display: flex; align-items: center; gap: 10px; animation: slideDown 0.3s ease; box-shadow: 0 8px 30px rgba(0,0,0,0.5); }
-  .toast.success { border-color: rgba(16,185,129,0.4); }
-  .toast.error { border-color: rgba(239,68,68,0.4); }
-  .toast.info { border-color: rgba(124,58,237,0.4); }
+.effects-preview { position:relative; margin-bottom:16px; border-radius:var(--radius); overflow:hidden; }
+.effects-preview .original-img { width:100%; max-height:260px; object-fit:cover; display:block; }
+.effects-preview .change-img { position:absolute; top:8px; right:8px; background:rgba(0,0,0,0.7); color:white; border:none; padding:6px 12px; border-radius:20px; font-size:12px; font-weight:600; cursor:pointer; }
 
-  /* IMAGE LIGHTBOX */
-  .lightbox { position: fixed; inset: 0; background: rgba(0,0,0,0.92); z-index: 100; display: flex; align-items: center; justify-content: center; padding: 20px; }
-  .lightbox img { max-width: 100%; max-height: 80vh; border-radius: 16px; object-fit: contain; }
-  .lightbox-close { position: absolute; top: 20px; right: 20px; background: rgba(255,255,255,0.1); border: none; color: white; width: 40px; height: 40px; border-radius: 50%; font-size: 20px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
-  .lightbox-actions { position: absolute; bottom: 30px; left: 50%; transform: translateX(-50%); display: flex; gap: 12px; }
-  .lb-btn { padding: 12px 24px; border-radius: 50px; border: none; font-size: 14px; font-weight: 600; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; gap: 6px; }
-  .lb-btn.primary { background: linear-gradient(135deg, var(--accent), var(--cyan)); color: white; }
-  .lb-btn.secondary { background: rgba(255,255,255,0.1); color: white; border: 1px solid rgba(255,255,255,0.2); }
-  .lb-btn:active { transform: scale(0.95); }
+.effects-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:8px; margin-bottom:16px; }
+.effect-tile { border-radius:12px; overflow:hidden; aspect-ratio:1; position:relative; cursor:pointer; border:2px solid transparent; transition:all 0.2s; background:var(--bg3); }
+.effect-tile.selected { border-color:var(--accent2); }
+.effect-tile:active { transform:scale(0.95); }
+.effect-tile .ef-preview { width:100%; height:100%; object-fit:cover; display:block; }
+.effect-tile .ef-overlay { position:absolute; inset:0; background:rgba(0,0,0,0.4); display:flex; flex-direction:column; align-items:center; justify-content:center; gap:2px; }
+.effect-tile .ef-ico { font-size:22px; }
+.effect-tile .ef-name { font-size:9px; font-weight:700; color:white; text-align:center; }
+.effect-tile.selected .ef-overlay { background:rgba(124,58,237,0.4); }
+.apply-btn { width:100%; padding:14px; border-radius:50px; background:linear-gradient(135deg,#ec4899,#a855f7); color:white; font-size:15px; font-weight:800; border:none; cursor:pointer; transition:all 0.2s; }
+.apply-btn:active { transform:scale(0.97); }
+.apply-btn:disabled { opacity:0.5; cursor:not-allowed; }
 
-  /* VOICE PAGE */
-  .voice-page { padding: 16px; }
-  .voice-card { background: var(--card); border: 1px solid var(--border); border-radius: 20px; padding: 24px; margin-bottom: 16px; text-align: center; }
-  .voice-btn { width: 80px; height: 80px; border-radius: 50%; background: linear-gradient(135deg, var(--pink), var(--accent)); border: none; color: white; font-size: 36px; cursor: pointer; margin: 16px auto; display: block; transition: all 0.2s; box-shadow: 0 4px 20px rgba(236,72,153,0.4); }
-  .voice-btn:active { transform: scale(0.9); }
-  .voice-btn.recording { animation: pulse 1.5s infinite; background: linear-gradient(135deg, #ef4444, #f97316); }
-  .voice-input { width: 100%; background: var(--bg3); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 14px; color: var(--text); font-size: 15px; font-family: inherit; margin-bottom: 12px; outline: none; resize: none; }
-  .voice-input:focus { border-color: var(--accent); }
-  .speak-btn { width: 100%; padding: 15px; border-radius: var(--radius); background: linear-gradient(135deg, var(--pink), var(--accent)); border: none; color: white; font-size: 15px; font-weight: 700; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; justify-content: center; gap: 8px; }
-  .speak-btn:active { transform: scale(0.98); }
-  .speak-btn:disabled { opacity: 0.4; }
-  .voice-languages { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 8px; margin-bottom: 16px; }
-  .voice-languages::-webkit-scrollbar { display: none; }
-  .lang-chip { flex-shrink: 0; padding: 8px 14px; border-radius: 20px; background: var(--card); border: 1px solid var(--border); font-size: 13px; cursor: pointer; transition: all 0.2s; }
-  .lang-chip.active { background: rgba(236,72,153,0.2); border-color: var(--pink); color: var(--pink); }
+/* ===== EXPLORE ===== */
+.explore-page { padding:16px; }
+.explore-search { display:flex; gap:10px; margin-bottom:16px; }
+.search-input-wrap { flex:1; display:flex; align-items:center; gap:10px; background:var(--bg3); border:1px solid var(--border); border-radius:50px; padding:0 16px; }
+.search-input-wrap input { flex:1; background:transparent; border:none; outline:none; color:var(--text); font-size:14px; height:44px; }
+.search-input-wrap input::placeholder { color:var(--muted); }
+.search-btn { padding:0 20px; height:44px; border-radius:50px; background:linear-gradient(135deg,var(--accent),var(--cyan)); color:white; border:none; font-size:14px; font-weight:700; cursor:pointer; }
 
-  @keyframes spin { to { transform: rotate(360deg); } }
-  @keyframes slideDown { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
-  @keyframes pulse { 0%, 100% { box-shadow: 0 4px 20px rgba(239,68,68,0.4); } 50% { box-shadow: 0 4px 40px rgba(239,68,68,0.8); transform: scale(1.05); } }
-  @keyframes shimmer { 0% { background-position: -200% 0; } 100% { background-position: 200% 0; } }
-  .skeleton { background: linear-gradient(90deg, var(--card) 0%, var(--bg3) 50%, var(--card) 100%); background-size: 200% 100%; animation: shimmer 1.5s infinite; border-radius: var(--radius-sm); }
+.category-tabs { display:flex; gap:8px; overflow-x:auto; scrollbar-width:none; margin-bottom:16px; }
+.category-tabs::-webkit-scrollbar { display:none; }
+.cat-tab { flex-shrink:0; padding:8px 16px; border-radius:50px; font-size:12px; font-weight:700; cursor:pointer; border:1px solid var(--border); background:var(--bg3); color:var(--muted); transition:all 0.2s; display:flex; align-items:center; gap:5px; }
+.cat-tab.active { background:linear-gradient(135deg,var(--accent),var(--accent2)); color:white; border-color:transparent; }
 
-  .badge { display: inline-flex; align-items: center; gap: 4px; background: rgba(16,185,129,0.15); border: 1px solid rgba(16,185,129,0.3); color: #10b981; font-size: 11px; font-weight: 700; padding: 3px 8px; border-radius: 6px; }
-  .badge.free { background: rgba(6,182,212,0.15); border-color: rgba(6,182,212,0.3); color: var(--cyan); }
-  .divider { height: 1px; background: var(--border); margin: 16px 0; }
+.explore-grid { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
+.explore-card { border-radius:14px; overflow:hidden; aspect-ratio:1; position:relative; cursor:pointer; background:var(--bg3); transition:transform 0.15s; }
+.explore-card:active { transform:scale(0.96); }
+.explore-card img { width:100%; height:100%; object-fit:cover; display:block; }
+.explore-card .exp-overlay { position:absolute; bottom:0; left:0; right:0; padding:16px 8px 8px; background:linear-gradient(transparent,rgba(0,0,0,0.8)); }
+.explore-card .exp-label { font-size:11px; font-weight:700; color:white; }
+
+/* ===== GALLERY ===== */
+.gallery-page { padding:16px; }
+.gallery-hdr { display:flex; align-items:center; justify-content:space-between; margin-bottom:16px; }
+.gallery-hdr h2 { font-size:20px; font-weight:900; }
+.clear-btn { padding:7px 14px; border-radius:50px; background:rgba(239,68,68,0.12); border:1px solid rgba(239,68,68,0.3); color:#f87171; font-size:12px; font-weight:600; cursor:pointer; }
+.gallery-grid { display:grid; grid-template-columns:1fr 1fr 1fr; gap:6px; }
+.gallery-item { border-radius:10px; overflow:hidden; aspect-ratio:1; position:relative; cursor:pointer; background:var(--bg3); }
+.gallery-item img { width:100%; height:100%; object-fit:cover; display:block; }
+.gallery-item .g-del { position:absolute; top:4px; right:4px; background:rgba(0,0,0,0.65); color:white; border:none; width:24px; height:24px; border-radius:50%; font-size:12px; cursor:pointer; display:flex; align-items:center; justify-content:center; }
+.gallery-item .g-label { position:absolute; bottom:0; left:0; right:0; padding:10px 5px 5px; background:linear-gradient(transparent,rgba(0,0,0,0.75)); font-size:9px; color:#e5e7eb; font-weight:600; }
+.gallery-empty { text-align:center; padding:60px 20px; }
+.gallery-empty .empty-ico { font-size:60px; margin-bottom:16px; }
+.gallery-empty h3 { font-size:18px; font-weight:700; margin-bottom:6px; }
+.gallery-empty p { font-size:13px; color:var(--muted); }
+
+/* ===== PROFILE ===== */
+.profile-page { padding:16px; }
+.profile-hero { text-align:center; padding:24px 0 20px; }
+.profile-avatar { width:80px; height:80px; border-radius:50%; margin:0 auto 12px; background:linear-gradient(135deg,var(--accent),var(--cyan)); display:flex; align-items:center; justify-content:center; font-size:36px; border:3px solid rgba(168,85,247,0.3); }
+.profile-name { font-size:20px; font-weight:800; margin-bottom:4px; }
+.profile-sub { font-size:13px; color:var(--muted); margin-bottom:16px; }
+.profile-stats { display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin-bottom:20px; }
+.stat-card { background:var(--bg3); border:1px solid var(--border); border-radius:var(--radius-sm); padding:14px; text-align:center; }
+.stat-num { font-size:24px; font-weight:900; background:linear-gradient(135deg,var(--accent2),var(--cyan)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
+.stat-label { font-size:11px; color:var(--muted); font-weight:600; margin-top:2px; }
+.settings-list { display:flex; flex-direction:column; gap:8px; }
+.setting-row { display:flex; align-items:center; justify-content:space-between; background:var(--bg3); border:1px solid var(--border); border-radius:14px; padding:14px 16px; cursor:pointer; }
+.setting-row-left { display:flex; align-items:center; gap:12px; }
+.setting-ico { width:36px; height:36px; border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:18px; }
+.setting-label { font-size:14px; font-weight:600; }
+.setting-sub { font-size:11px; color:var(--muted); margin-top:1px; }
+.setting-arrow { color:var(--muted); font-size:18px; }
+
+/* LIGHTBOX */
+.lightbox { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.92); z-index:200; flex-direction:column; align-items:center; justify-content:center; padding:20px; }
+.lightbox.open { display:flex; animation:fadeIn 0.2s ease; }
+.lightbox img { max-width:100%; max-height:75vh; border-radius:16px; object-fit:contain; }
+.lb-actions { display:flex; gap:10px; margin-top:16px; }
+.lb-btn { padding:11px 22px; border-radius:50px; font-size:14px; font-weight:700; cursor:pointer; border:none; display:flex; align-items:center; gap:6px; transition:all 0.2s; }
+.lb-btn.primary { background:linear-gradient(135deg,var(--accent),var(--cyan)); color:white; }
+.lb-btn.secondary { background:var(--bg3); border:1px solid var(--border); color:var(--text); }
+.lb-close { position:absolute; top:16px; right:16px; background:rgba(255,255,255,0.1); border:none; color:white; width:40px; height:40px; border-radius:50%; font-size:20px; cursor:pointer; display:flex; align-items:center; justify-content:center; }
+
+/* TOAST */
+.toast-wrap { position:fixed; bottom:90px; left:50%; transform:translateX(-50%); z-index:300; display:flex; flex-direction:column; gap:8px; pointer-events:none; width:calc(100% - 32px); max-width:340px; }
+.toast { padding:13px 18px; border-radius:50px; font-size:13px; font-weight:700; text-align:center; animation:pop 0.3s ease; pointer-events:auto; color:white; }
+.toast.success { background:linear-gradient(135deg,#059669,#10b981); }
+.toast.error { background:linear-gradient(135deg,#dc2626,#ef4444); }
+.toast.info { background:linear-gradient(135deg,var(--accent),var(--accent2)); }
+.toast.out { animation:fadeIn 0.2s ease reverse; }
+
+/* VOICE AI */
+.voice-page { padding:16px; }
+.voice-hero { text-align:center; padding:20px 0 24px; }
+.voice-hero h2 { font-size:22px; font-weight:900; margin-bottom:6px; }
+.voice-hero p { font-size:13px; color:var(--muted); }
+.voice-input-box { background:var(--bg3); border:1px solid var(--border); border-radius:var(--radius); padding:16px; margin-bottom:12px; }
+.voice-input-box textarea { width:100%; background:transparent; border:none; outline:none; color:var(--text); font-size:15px; line-height:1.6; resize:none; min-height:90px; font-family:inherit; }
+.voice-input-box textarea::placeholder { color:var(--muted); }
+.voice-langs { display:flex; gap:8px; overflow-x:auto; scrollbar-width:none; margin-bottom:16px; }
+.voice-langs::-webkit-scrollbar { display:none; }
+.lang-chip { flex-shrink:0; padding:8px 14px; border-radius:50px; font-size:12px; font-weight:600; cursor:pointer; border:1px solid var(--border); background:var(--bg3); color:var(--muted); transition:all 0.2s; }
+.lang-chip.active { background:rgba(124,58,237,0.2); border-color:var(--accent2); color:var(--accent2); }
+.voice-controls { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:16px; }
+.voice-ctrl { background:var(--bg3); border:1px solid var(--border); border-radius:14px; padding:14px; }
+.voice-ctrl label { display:block; font-size:11px; color:var(--muted); font-weight:600; margin-bottom:8px; }
+.voice-ctrl input[type=range] { width:100%; accent-color:var(--accent2); }
+.speak-btn { width:100%; padding:16px; border-radius:50px; background:linear-gradient(135deg,#ec4899,#a855f7); color:white; font-size:16px; font-weight:800; border:none; cursor:pointer; transition:all 0.2s; }
+.speak-btn:active { transform:scale(0.97); }
+.speak-btn.speaking { background:linear-gradient(135deg,#dc2626,#ef4444); animation:pulse 1.5s infinite; }
 </style>
 </head>
 <body>
 <div id="app">
-  <!-- Toast container -->
-  <div class="toast-container" id="toasts"></div>
-
-  <!-- Header -->
   <div class="header">
-    <div class="header-logo">
-      <svg viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <defs><linearGradient id="lg1" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#a855f7"/><stop offset="100%" stop-color="#06b6d4"/></linearGradient></defs>
-        <path d="M14 2L16.5 9.5H24L18 14.5L20.5 22L14 17.5L7.5 22L10 14.5L4 9.5H11.5L14 2Z" fill="url(#lg1)"/>
-      </svg>
-      <span>LuminaAI</span>
+    <div class="logo">
+      <div class="logo-icon">✨</div>
+      <span class="logo-text">LuminaAI</span>
     </div>
-    <div class="header-right">
-      <span class="badge free">✦ FREE</span>
+    <div class="header-badges">
+      <span class="badge-free">✦ FREE</span>
+      <div class="badge-notif" onclick="toast('No new notifications','info')">🔔</div>
     </div>
   </div>
 
-  <!-- Page content -->
-  <div class="page" id="page-content"></div>
+  <!-- PAGES -->
+  <div class="page" id="page-container"></div>
 
-  <!-- Bottom nav -->
-  <nav class="nav">
+  <!-- NAV -->
+  <div class="nav">
     <div class="nav-item active" id="nav-home" onclick="setPage('home')">
-      <svg fill="none" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 12l8.954-8.955a1.126 1.126 0 011.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25"/></svg>
-      <span>Home</span>
+      <span class="nav-ico">🏠</span><span>Home</span>
     </div>
     <div class="nav-item" id="nav-explore" onclick="setPage('explore')">
-      <svg fill="none" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 15.75l-2.489-2.489m0 0a3.375 3.375 0 10-4.773-4.773 3.375 3.375 0 004.774 4.774zM21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-      <span>Explore</span>
+      <span class="nav-ico">🔭</span><span>Explore</span>
     </div>
-    <div class="nav-create" onclick="setPage('create')">
-      <svg fill="none" viewBox="0 0 24 24" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15"/></svg>
-    </div>
+    <div class="nav-create" onclick="setPage('create')">✨</div>
     <div class="nav-item" id="nav-gallery" onclick="setPage('gallery')">
-      <svg fill="none" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 001.5-1.5V6a1.5 1.5 0 00-1.5-1.5H3.75A1.5 1.5 0 002.25 6v12a1.5 1.5 0 001.5 1.5zm10.5-11.25h.008v.008h-.008V8.25zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z"/></svg>
-      <span>Gallery</span>
+      <span class="nav-ico">🖼</span><span>Gallery</span>
     </div>
     <div class="nav-item" id="nav-profile" onclick="setPage('profile')">
-      <svg fill="none" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z"/></svg>
-      <span>Profile</span>
+      <span class="nav-ico">👤</span><span>Profile</span>
     </div>
-  </nav>
+  </div>
 </div>
 
-<!-- Hidden canvases for effects -->
-<canvas id="effect-source" class="canvas-hidden"></canvas>
-<canvas id="effect-output" class="canvas-hidden"></canvas>
+<!-- LIGHTBOX -->
+<div class="lightbox" id="lightbox">
+  <button class="lb-close" onclick="closeLightbox()">✕</button>
+  <img id="lb-img" src="" alt="">
+  <div class="lb-actions">
+    <button class="lb-btn primary" onclick="downloadLightboxImg()">⬇ Save</button>
+    <button class="lb-btn secondary" onclick="saveToGalleryFromLb()">🖼 Gallery</button>
+  </div>
+</div>
+
+<!-- TOAST CONTAINER -->
+<div class="toast-wrap" id="toast-wrap"></div>
 
 <script>
-// ============================================
-// STATE
-// ============================================
-let currentPage = 'home';
+// ==================== DATA ====================
 let gallery = JSON.parse(localStorage.getItem('lumina_gallery') || '[]');
-let generating = false;
-let lastGeneratedUrl = null;
-let selectedStyle = 'photorealistic';
-let selectedSize = '1:1';
-let effectsImage = null;
-let selectedEffect = null;
-let speakVoice = null;
-let darkMode = true;
-let feedImages = [];
-let exploreImages = [];
-let exploreCat = 'all';
+let currentPage = 'home';
+let lightboxUrl = '';
 
-const STYLES = [
-  { id: 'photorealistic', emoji: '📷', name: 'Realistic', prompt: 'photorealistic, ultra detailed, 8k' },
-  { id: 'anime', emoji: '🎌', name: 'Anime', prompt: 'anime style, vibrant, cel shaded, studio ghibli' },
-  { id: '3d', emoji: '🎮', name: '3D Render', prompt: '3d render, cinema 4d, octane render, high quality' },
-  { id: 'oil', emoji: '🎨', name: 'Oil Paint', prompt: 'oil painting, classical art, brush strokes, renaissance style' },
-  { id: 'watercolor', emoji: '🖌️', name: 'Watercolor', prompt: 'watercolor painting, soft edges, pastel colors, artistic' },
-  { id: 'pixel', emoji: '👾', name: 'Pixel Art', prompt: 'pixel art, 16-bit, retro game style' },
-  { id: 'fantasy', emoji: '🐉', name: 'Fantasy', prompt: 'fantasy art, epic, magical, detailed illustration' },
-  { id: 'neon', emoji: '🌆', name: 'Cyberpunk', prompt: 'cyberpunk, neon lights, futuristic city, dark atmosphere' },
-  { id: 'sketch', emoji: '✏️', name: 'Sketch', prompt: 'pencil sketch, hand drawn, black and white, artistic' },
-];
-
-const SIZES = [
-  { id: '1:1', label: '1:1', w: 1024, h: 1024 },
-  { id: '16:9', label: '16:9', w: 1280, h: 720 },
-  { id: '9:16', label: '9:16', w: 720, h: 1280 },
-  { id: '4:3', label: '4:3', w: 1024, h: 768 },
-];
-
-const EFFECTS = [
-  { id: 'none', name: 'Original', filter: null },
-  { id: 'vivid', name: 'Vivid', filter: 'saturate(2.5) contrast(1.2)' },
-  { id: 'vintage', name: 'Vintage', filter: 'sepia(0.7) contrast(1.1) brightness(0.9)' },
-  { id: 'cold', name: 'Cold', filter: 'hue-rotate(180deg) saturate(1.5)' },
-  { id: 'warm', name: 'Warm', filter: 'sepia(0.4) saturate(1.8) brightness(1.1)' },
-  { id: 'neon', name: 'Neon', filter: 'saturate(3) hue-rotate(270deg) contrast(1.3)' },
-  { id: 'bw', name: 'B&W', filter: 'grayscale(1)' },
-  { id: 'dramatic', name: 'Dramatic', filter: 'contrast(1.8) brightness(0.8) saturate(1.5)' },
-  { id: 'dreamy', name: 'Dreamy', filter: 'blur(1px) brightness(1.2) saturate(0.8)' },
-  { id: 'fade', name: 'Fade', filter: 'brightness(1.2) contrast(0.8) saturate(0.6)' },
-  { id: 'golden', name: 'Golden', filter: 'sepia(0.5) saturate(1.8) hue-rotate(-20deg)' },
-  { id: 'purple', name: 'Purple', filter: 'hue-rotate(270deg) saturate(2) brightness(0.9)' },
-];
-
-const FEED_PROMPTS = [
-  { p: 'A futuristic city with neon lights reflecting on wet streets at night', s: 'Cyberpunk' },
-  { p: 'Majestic dragon soaring through stormy clouds at sunset', s: 'Fantasy' },
-  { p: 'Beautiful anime girl with flowing purple hair, cherry blossoms', s: 'Anime' },
-  { p: 'Hyperrealistic portrait of a robot with human eyes, reflective metal', s: 'Sci-Fi' },
-  { p: 'Enchanted forest with glowing mushrooms and fireflies', s: 'Fantasy' },
-  { p: 'Astronaut exploring alien planet with two moons in the sky', s: 'Sci-Fi' },
+const FEED_ITEMS = [
+  {p:'futuristic neon tokyo cyberpunk rain reflection', label:'Tokyo Neon', style:'Cyberpunk'},
+  {p:'majestic dragon soaring through storm clouds fantasy epic', label:'Storm Dragon', style:'Fantasy'},
+  {p:'anime girl cherry blossoms spring kimono beautiful', label:'Cherry Blossom', style:'Anime'},
+  {p:'hyperrealistic portrait astronaut galaxy milky way', label:'Space Explorer', style:'Portrait'},
+  {p:'enchanted forest magical glowing mushrooms fairy light', label:'Magic Forest', style:'Fantasy'},
+  {p:'oil painting sunset mountains impressionist vibrant', label:'Sunset Vista', style:'Art'},
+  {p:'steampunk robot workshop gears Victorian brass', label:'Steam Workshop', style:'Steampunk'},
+  {p:'underwater city coral reef mermaid bioluminescent', label:'Deep City', style:'Sci-Fi'},
 ];
 
 const EXPLORE_CATS = [
-  { id: 'all', label: '✦ All' },
-  { id: 'nature', label: '🌿 Nature' },
-  { id: 'portrait', label: '👤 Portrait' },
-  { id: 'fantasy', label: '🐉 Fantasy' },
-  { id: 'space', label: '🚀 Space' },
-  { id: 'city', label: '🌆 City' },
-  { id: 'anime', label: '🎌 Anime' },
+  {emoji:'🌌',name:'Space'},
+  {emoji:'🐉',name:'Fantasy'},
+  {emoji:'🤖',name:'Sci-Fi'},
+  {emoji:'🌸',name:'Anime'},
+  {emoji:'🏙',name:'Urban'},
+  {emoji:'🎨',name:'Abstract'},
+  {emoji:'🌊',name:'Nature'},
+  {emoji:'👾',name:'Pixel'},
 ];
 
-const EXPLORE_PROMPTS = {
-  all: ['magical forest','space nebula','futuristic city','anime warrior','portrait face','ocean sunset','cyberpunk street','dragon flying'],
-  nature: ['misty forest morning','tropical waterfall','desert dunes golden hour','arctic aurora borealis','cherry blossom garden'],
-  portrait: ['hyperrealistic woman portrait','mysterious eyes closeup','cyberpunk girl portrait','elderly wise man face'],
-  fantasy: ['dragon castle epic','wizard casting spell','fairy forest magical','ancient ruins overgrown'],
-  space: ['astronaut floating galaxy','alien planet twin moons','nebula explosion colorful','spaceship warp speed'],
-  city: ['tokyo neon rain','new york skyline night','futuristic megacity','paris rooftop sunset'],
-  anime: ['anime girl cherry blossoms','shonen warrior battle','ghibli countryside village','mecha robot city'],
-};
+const EXPLORE_ITEMS = [
+  {p:'cosmic nebula planet formation purple blue', label:'Cosmic Birth', cat:'Space'},
+  {p:'fantasy castle floating island waterfall sunset', label:'Sky Castle', cat:'Fantasy'},
+  {p:'robot samurai neon city rain', label:'Cyber Samurai', cat:'Sci-Fi'},
+  {p:'anime magical girl transformation sparkles', label:'Magic Girl', cat:'Anime'},
+  {p:'rainy neon alley cyberpunk reflection', label:'Neon Alley', cat:'Urban'},
+  {p:'abstract fluid art colorful swirls', label:'Fluid Dream', cat:'Abstract'},
+  {p:'deep ocean bioluminescent jellyfish', label:'Ocean Glow', cat:'Nature'},
+  {p:'pixel art retro game landscape 8bit', label:'Pixel World', cat:'Pixel'},
+  {p:'black hole event horizon space warp', label:'Event Horizon', cat:'Space'},
+  {p:'dragon knight armor epic battle', label:'Dragon Knight', cat:'Fantasy'},
+  {p:'space station interior astronaut', label:'Space Station', cat:'Sci-Fi'},
+  {p:'anime landscape mountain cherry blossom', label:'Sakura Peak', cat:'Anime'},
+  {p:'graffiti wall urban art colorful', label:'Street Art', cat:'Urban'},
+  {p:'geometric abstract 3d shapes neon', label:'Neon Geometry', cat:'Abstract'},
+  {p:'waterfall rainbow tropical forest', label:'Rainbow Falls', cat:'Nature'},
+  {p:'pixel art city night retro', label:'Pixel City', cat:'Pixel'},
+];
+
+const STYLES = [
+  {id:'none', name:'No Style', icon:'🎯'},
+  {id:'photorealistic', name:'Photo Real', icon:'📷'},
+  {id:'anime', name:'Anime', icon:'🌸'},
+  {id:'oil-painting', name:'Oil Paint', icon:'🖌'},
+  {id:'watercolor', name:'Watercolor', icon:'💧'},
+  {id:'cyberpunk', name:'Cyberpunk', icon:'🤖'},
+  {id:'fantasy', name:'Fantasy', icon:'🐉'},
+  {id:'3d-render', name:'3D Render', icon:'💎'},
+  {id:'pixel-art', name:'Pixel Art', icon:'👾'},
+];
+
+const EFFECTS = [
+  {id:'original',name:'Original',icon:'🖼',filter:'none'},
+  {id:'vivid',name:'Vivid',icon:'🌈',filter:'saturate(2) contrast(1.1)'},
+  {id:'cinematic',name:'Cinematic',icon:'🎬',filter:'contrast(1.2) brightness(0.9) sepia(0.1)'},
+  {id:'neon',name:'Neon Glow',icon:'✨',filter:'saturate(3) brightness(1.2) contrast(1.3)'},
+  {id:'vintage',name:'Vintage',icon:'📷',filter:'sepia(0.7) contrast(1.1) brightness(0.95)'},
+  {id:'bw',name:'B&W',icon:'⚫',filter:'grayscale(1) contrast(1.1)'},
+  {id:'cool',name:'Cool Tone',icon:'❄️',filter:'hue-rotate(200deg) saturate(1.3)'},
+  {id:'warm',name:'Warm Tone',icon:'🌅',filter:'hue-rotate(-20deg) saturate(1.4) brightness(1.05)'},
+  {id:'dramatic',name:'Dramatic',icon:'🎭',filter:'contrast(1.5) brightness(0.8) saturate(1.2)'},
+  {id:'soft',name:'Soft',icon:'🌸',filter:'blur(0.5px) brightness(1.1) saturate(0.9)'},
+  {id:'sharp',name:'Sharpen',icon:'🔪',filter:'contrast(1.3) saturate(1.1)'},
+  {id:'fade',name:'Faded',icon:'🌫',filter:'opacity(0.85) brightness(1.1) saturate(0.7)'},
+];
 
 const LANGUAGES = [
-  { code: 'en-US', label: '🇺🇸 English' },
-  { code: 'hi-IN', label: '🇮🇳 Hindi' },
-  { code: 'es-ES', label: '🇪🇸 Spanish' },
-  { code: 'fr-FR', label: '🇫🇷 French' },
-  { code: 'de-DE', label: '🇩🇪 German' },
-  { code: 'ja-JP', label: '🇯🇵 Japanese' },
-  { code: 'zh-CN', label: '🇨🇳 Chinese' },
-  { code: 'ar-SA', label: '🇸🇦 Arabic' },
+  {code:'en-US',name:'English 🇺🇸'},
+  {code:'hi-IN',name:'Hindi 🇮🇳'},
+  {code:'ja-JP',name:'Japanese 🇯🇵'},
+  {code:'ko-KR',name:'Korean 🇰🇷'},
+  {code:'fr-FR',name:'French 🇫🇷'},
+  {code:'de-DE',name:'German 🇩🇪'},
+  {code:'es-ES',name:'Spanish 🇪🇸'},
+  {code:'zh-CN',name:'Chinese 🇨🇳'},
 ];
 
+// ==================== STATE ====================
+let selectedStyle = 'none';
+let selectedSize = {w:512,h:512,id:'square'};
+let uploadedImage = null;
+let effectsImage = null;
+let selectedEffect = 'vivid';
 let selectedLang = 'en-US';
+let voiceRate = 1.0;
+let voicePitch = 1.0;
+let isSpeaking = false;
+let currentSpeech = null;
+let exploreCat = 'Space';
+let genRetries = 0;
 
-// ============================================
-// UTILITY
-// ============================================
-function toast(msg, type = 'info', duration = 3500) {
-  const container = document.getElementById('toasts');
-  const icons = { success: '✅', error: '❌', info: '✦' };
-  const t = document.createElement('div');
-  t.className = `toast ${type}`;
-  t.innerHTML = `<span>${icons[type]}</span><span>${msg}</span>`;
-  container.appendChild(t);
-  setTimeout(() => { t.style.opacity = '0'; t.style.transition = 'opacity 0.3s'; setTimeout(() => t.remove(), 300); }, duration);
+function pUrl(prompt, w, h, seed) {
+  const enc = encodeURIComponent(prompt.trim().substring(0,200));
+  const s = seed || Math.floor(Math.random()*99999);
+  return `https://image.pollinations.ai/prompt/${enc}?width=${w}&height=${h}&seed=${s}&nologo=true&model=flux`;
 }
 
+// ==================== GALLERY ====================
 function saveGallery() {
-  // Keep last 50 images
-  if (gallery.length > 50) gallery = gallery.slice(-50);
-  localStorage.setItem('lumina_gallery', JSON.stringify(gallery));
+  try { localStorage.setItem('lumina_gallery', JSON.stringify(gallery)); } catch(e) {}
+}
+function addToGallery(url, prompt, style) {
+  gallery.push({ url, prompt: (prompt||'').substring(0,80), style: style||'AI', ts: Date.now() });
+  if (gallery.length > 100) gallery = gallery.slice(-100);
+  saveGallery();
+  toast('Saved to Gallery! 🖼', 'success');
+}
+function deleteGallery(idx) {
+  gallery.splice(idx, 1);
+  saveGallery();
+  renderPage();
+  toast('Deleted', 'info');
+}
+function clearGallery() {
+  if (!confirm('Clear all saved images?')) return;
+  gallery = [];
+  saveGallery();
+  renderPage();
+  toast('Gallery cleared', 'info');
 }
 
-function pollinationsUrl(prompt, w, h, seed) {
-  const s = seed || Math.floor(Math.random() * 99999);
-  const encoded = encodeURIComponent(prompt);
-  return `https://image.pollinations.ai/prompt/${encoded}?width=${w}&height=${h}&seed=${s}&nologo=true`;
+// ==================== TOAST ====================
+function toast(msg, type='info') {
+  const wrap = document.getElementById('toast-wrap');
+  const el = document.createElement('div');
+  el.className = `toast ${type}`;
+  el.textContent = msg;
+  wrap.appendChild(el);
+  setTimeout(() => { el.classList.add('out'); setTimeout(() => el.remove(), 300); }, 2800);
 }
 
+// ==================== LIGHTBOX ====================
+function openLightbox(url) {
+  lightboxUrl = url;
+  document.getElementById('lb-img').src = url;
+  document.getElementById('lightbox').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function closeLightbox() {
+  document.getElementById('lightbox').classList.remove('open');
+  document.body.style.overflow = '';
+}
+function downloadLightboxImg() {
+  downloadImage(lightboxUrl);
+}
+function saveToGalleryFromLb() {
+  addToGallery(lightboxUrl, 'Saved from lightbox', 'Saved');
+}
 function downloadImage(url, filename) {
   const a = document.createElement('a');
   a.href = url;
-  a.download = filename || 'lumina-ai.jpg';
+  a.download = filename || 'lumina-ai-' + Date.now() + '.jpg';
   a.target = '_blank';
   a.click();
-  toast('Saving image...', 'success');
+  toast('Downloading image... ⬇', 'info');
 }
 
-// ============================================
-// NAVIGATION
-// ============================================
+// ==================== NAV ====================
 function setPage(page) {
   currentPage = page;
   ['home','explore','create','gallery','profile'].forEach(p => {
@@ -450,619 +490,734 @@ function setPage(page) {
     if (el) el.classList.toggle('active', p === page);
   });
   renderPage();
+  document.getElementById('page-container').scrollTop = 0;
 }
 
 function renderPage() {
-  const container = document.getElementById('page-content');
-  if (currentPage === 'home') renderHome(container);
-  else if (currentPage === 'create') renderCreate(container);
-  else if (currentPage === 'explore') renderExplore(container);
-  else if (currentPage === 'gallery') renderGallery(container);
-  else if (currentPage === 'profile') renderProfile(container);
-  else if (currentPage === 'effects') renderEffects(container);
-  else if (currentPage === 'voice') renderVoice(container);
+  const c = document.getElementById('page-container');
+  if (currentPage === 'home') renderHome(c);
+  else if (currentPage === 'explore') renderExplore(c);
+  else if (currentPage === 'create') renderCreate(c);
+  else if (currentPage === 'gallery') renderGallery(c);
+  else if (currentPage === 'profile') renderProfile(c);
 }
 
-// ============================================
-// HOME PAGE
-// ============================================
+// ==================== HOME ====================
 function renderHome(c) {
   c.innerHTML = `
-    <div class="home-hero">
-      <div class="home-hero-tag">✦ AI Art Studio</div>
-      <h1>Create <span>stunning AI art</span> for free</h1>
-      <p>Generate beautiful images using AI. No account needed, no limits.</p>
-      <button class="hero-btn" onclick="setPage('create')">
-        <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="white" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09z"/></svg>
-        Generate Now — Free
-      </button>
+    <div class="hero-banner">
+      <div class="hero-tag">✦ AI Art Studio</div>
+      <h1 class="hero-title">Create <em>Stunning</em><br>AI Artwork Free</h1>
+      <p class="hero-sub">Generate, transform & explore AI images. No limits. No cost. No signup.</p>
+      <div class="hero-actions">
+        <button class="btn-primary" onclick="setPage('create')">✨ Create Now</button>
+        <button class="btn-outline" onclick="setPage('explore')">🔭 Explore</button>
+      </div>
     </div>
 
-    <div style="display:flex; gap:10px; padding:0 16px 4px; overflow-x:auto;" class="quick-btns">
-      <button onclick="setPage('effects')" style="flex-shrink:0;padding:10px 18px;border-radius:50px;background:rgba(236,72,153,0.15);border:1px solid rgba(236,72,153,0.3);color:#ec4899;font-size:13px;font-weight:600;cursor:pointer;">✨ Effects</button>
-      <button onclick="setPage('voice')" style="flex-shrink:0;padding:10px 18px;border-radius:50px;background:rgba(6,182,212,0.15);border:1px solid rgba(6,182,212,0.3);color:#06b6d4;font-size:13px;font-weight:600;cursor:pointer;">🎙 Voice AI</button>
-      <button onclick="setPage('gallery')" style="flex-shrink:0;padding:10px 18px;border-radius:50px;background:rgba(124,58,237,0.15);border:1px solid rgba(124,58,237,0.3);color:#a855f7;font-size:13px;font-weight:600;cursor:pointer;">🖼 Gallery</button>
+    <div class="home-tabs">
+      <div class="home-tab active">🔥 Trending</div>
+      <div class="home-tab" onclick="toast('Coming soon!','info')">⭐ Featured</div>
+      <div class="home-tab" onclick="toast('Coming soon!','info')">🆕 New</div>
+      <div class="home-tab" onclick="setPage('gallery')">🖼 My Work</div>
     </div>
 
-    <div class="section-title">🔥 Trending AI Art</div>
-    <div class="feed-grid" id="feed-grid">
-      ${FEED_PROMPTS.map((fp, i) => `
-        <div class="feed-card" id="feed-${i}" onclick="openLightbox('${pollinationsUrl(fp.p, 512, 680, 1000+i)}')">
-          <div class="feed-card-loading"><div class="spinner"></div></div>
+    <div class="section-hdr">
+      <h2>🔥 Trending AI Art</h2>
+      <a onclick="setPage('explore')">See all →</a>
+    </div>
+    <div class="feed-grid" id="feed-grid"></div>
+    <div style="height:20px"></div>
+
+    <div class="section-hdr">
+      <h2>🎨 Quick Tools</h2>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:0 16px;margin-bottom:20px;">
+      ${[
+        {ico:'✨',name:'AI Image',sub:'Generate from text',page:'create'},
+        {ico:'🎨',name:'Effects',sub:'Filter & transform',page:'effects'},
+        {ico:'🗣',name:'Voice AI',sub:'Text to speech',page:'voice'},
+        {ico:'🔭',name:'Explore',sub:'Browse AI art',page:'explore'},
+      ].map(t=>`
+        <div onclick="setPage('${t.page}')" style="background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);padding:16px;cursor:pointer;transition:transform 0.15s;active:" ontouchstart="this.style.transform='scale(0.96)'" ontouchend="this.style.transform='scale(1)'">
+          <div style="font-size:28px;margin-bottom:8px">${t.ico}</div>
+          <div style="font-size:14px;font-weight:800;margin-bottom:2px">${t.name}</div>
+          <div style="font-size:11px;color:var(--muted)">${t.sub}</div>
         </div>
       `).join('')}
     </div>
-    <div style="height:20px;"></div>
   `;
-  // Load feed images
-  FEED_PROMPTS.forEach((fp, i) => {
-    const card = document.getElementById(`feed-${i}`);
-    if (!card) return;
-    const url = pollinationsUrl(fp.p, 512, 680, 1000+i);
+  // Render feed cards
+  const grid = document.getElementById('feed-grid');
+  FEED_ITEMS.forEach((item, i) => {
+    const seed = 1000 + i;
+    const url = pUrl(item.p, 512, 680, seed);
+    const card = document.createElement('div');
+    card.className = 'feed-card';
+    card.onclick = () => openLightbox(url);
+    // Shimmer placeholder
+    card.innerHTML = `<div class="feed-card-shimmer shimmer"></div>`;
+    grid.appendChild(card);
+    // Load image
     const img = new Image();
+    img.crossOrigin = 'anonymous';
+    let retries = 0;
+    const load = () => {
+      img.src = url + `&_r=${retries}`;
+    };
     img.onload = () => {
       card.innerHTML = `
-        <img src="${url}" alt="${fp.p}" loading="lazy">
-        <div class="feed-card-info">
-          <div class="style-tag">${fp.s}</div>
-          <p>${fp.p.substring(0,45)}...</p>
-        </div>
-      `;
+        <img src="${img.src}" alt="${item.label}">
+        <div class="feed-card-label">
+          <span class="tag">${item.style}</span>
+          <p>${item.label}</p>
+        </div>`;
     };
     img.onerror = () => {
-      card.innerHTML = `<div class="feed-card-loading"><span style="font-size:24px">🎨</span><p style="font-size:11px;color:#6b7280;text-align:center;padding:8px">${fp.p.substring(0,30)}...</p></div>`;
+      if (retries < 2) {
+        retries++;
+        setTimeout(load, 4000 * retries);
+      } else {
+        card.innerHTML = `
+          <div style="width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;padding:12px;text-align:center;">
+            <div style="font-size:28px">🎨</div>
+            <p style="font-size:10px;color:var(--muted);line-height:1.4">${item.label}</p>
+            <button onclick="event.stopPropagation();this.parentElement.parentElement.querySelector('.shimmer')&&(location.href=location.href)" style="font-size:10px;padding:5px 10px;border-radius:20px;background:rgba(124,58,237,0.2);border:1px solid rgba(124,58,237,0.3);color:var(--accent2);cursor:pointer;">Retry</button>
+          </div>`;
+      }
     };
-    img.src = url;
+    load();
   });
 }
 
-// ============================================
-// CREATE PAGE (AI IMAGE GENERATOR)
-// ============================================
+// ==================== CREATE ====================
+let createMode = 'text'; // 'text' or 'image'
 function renderCreate(c) {
-  const sizeObj = SIZES.find(s => s.id === selectedSize);
   c.innerHTML = `
     <div class="create-page">
-      <div class="create-title">✦ AI Image</div>
-      <div class="create-subtitle">Describe anything — AI brings it to life</div>
+      <div class="create-hero">
+        <h2>✨ AI Image Creator</h2>
+        <p>Turn your words & images into stunning AI art — free</p>
+      </div>
 
+      <!-- Mode toggle -->
+      <div style="display:flex;gap:8px;margin-bottom:16px;background:var(--bg3);border-radius:50px;padding:4px;border:1px solid var(--border);">
+        <button id="mode-text" onclick="switchMode('text')" style="flex:1;padding:10px;border-radius:50px;border:none;font-size:13px;font-weight:700;cursor:pointer;transition:all 0.2s;${createMode==='text'?'background:linear-gradient(135deg,var(--accent),var(--cyan));color:white':'background:transparent;color:var(--muted)'}">📝 Text to Image</button>
+        <button id="mode-img" onclick="switchMode('image')" style="flex:1;padding:10px;border-radius:50px;border:none;font-size:13px;font-weight:700;cursor:pointer;transition:all 0.2s;${createMode==='image'?'background:linear-gradient(135deg,var(--accent),var(--cyan));color:white':'background:transparent;color:var(--muted)'}">🖼 Image Prompt</button>
+      </div>
+
+      <!-- Image upload (shown in image mode) -->
+      <div id="img-upload-section" style="${createMode==='image'?'':'display:none'}">
+        <div id="upload-area" class="img-upload-area" onclick="document.getElementById('create-img-input').click()">
+          <div id="upload-content">
+            <div class="upload-ico">📷</div>
+            <p>Tap to upload a reference image</p>
+            <p class="upload-hint">JPG, PNG, WEBP supported</p>
+          </div>
+        </div>
+        <input type="file" id="create-img-input" accept="image/*" style="display:none" onchange="handleCreateImgUpload(this)">
+      </div>
+
+      <!-- Prompt -->
       <div class="prompt-box">
-        <textarea id="prompt-input" rows="3" placeholder="e.g. A majestic lion in golden light, photorealistic, 8k..." maxlength="500"></textarea>
+        <textarea id="create-prompt" rows="3" placeholder="${createMode==='image'?'Describe what to add or change in the image...':'Describe your image in detail... e.g. a glowing dragon over Tokyo at night'}" maxlength="400"></textarea>
         <div class="prompt-actions">
-          <span class="prompt-hint" id="char-count">0 / 500</span>
-          <button class="enhance-btn" id="enhance-btn" onclick="enhancePrompt()">
-            <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09z"/></svg>
-            Enhance
-          </button>
+          <div class="prompt-actions-left">
+            <button class="small-btn accent" onclick="enhancePrompt()">🪄 Enhance</button>
+            <button class="small-btn" onclick="document.getElementById('create-prompt').value=''">✕ Clear</button>
+          </div>
+          <span id="char-count" style="font-size:11px;color:var(--muted)">0/400</span>
         </div>
       </div>
 
-      <div class="section-label">🎨 Art Style</div>
-      <div class="style-grid">
-        ${STYLES.map(s => `
-          <div class="style-card ${selectedStyle === s.id ? 'selected' : ''}" onclick="selectStyle('${s.id}')">
-            <span class="emoji">${s.emoji}</span>
-            <div class="name">${s.name}</div>
-          </div>
-        `).join('')}
+      <!-- Styles -->
+      <div style="margin-bottom:16px;">
+        <div style="font-size:12px;font-weight:700;color:var(--muted);margin-bottom:8px;padding:0 2px;text-transform:uppercase;letter-spacing:1px;">Style</div>
+        <div class="style-scroll">
+          ${STYLES.map(s=>`<div class="style-chip ${selectedStyle===s.id?'active':''}" onclick="selectStyle('${s.id}')">${s.icon} ${s.name}</div>`).join('')}
+        </div>
       </div>
 
-      <div class="section-label">📐 Image Size</div>
-      <div class="size-row">
-        ${SIZES.map(s => `<div class="size-chip ${selectedSize === s.id ? 'selected' : ''}" onclick="selectSize('${s.id}')">${s.label}</div>`).join('')}
+      <!-- Size -->
+      <div style="margin-bottom:20px;">
+        <div style="font-size:12px;font-weight:700;color:var(--muted);margin-bottom:8px;padding:0 2px;text-transform:uppercase;letter-spacing:1px;">Size</div>
+        <div class="size-grid">
+          ${[
+            {id:'square',label:'Square',ratio:'1:1',w:512,h:512,ico:'⬛'},
+            {id:'portrait',label:'Portrait',ratio:'3:4',w:384,h:512,ico:'📱'},
+            {id:'landscape',label:'Landscape',ratio:'4:3',w:512,h:384,ico:'🖥'},
+          ].map(s=>`
+            <div class="size-btn ${selectedSize.id===s.id?'active':''}" onclick="selectSize('${s.id}',${s.w},${s.h})">
+              <div class="ratio">${s.ico}</div>
+              <div class="label">${s.label} ${s.ratio}</div>
+            </div>
+          `).join('')}
+        </div>
       </div>
 
+      <!-- Generate button -->
       <button class="gen-btn" id="gen-btn" onclick="generateImage()">
-        <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="white" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09z"/></svg>
-        Generate Image
+        ✨ Generate Image
       </button>
 
+      <!-- Result -->
       <div id="result-area"></div>
     </div>
   `;
-  const ta = document.getElementById('prompt-input');
+  // Char counter
+  const ta = document.getElementById('create-prompt');
   ta.addEventListener('input', () => {
-    document.getElementById('char-count').textContent = `${ta.value.length} / 500`;
-  });
-  if (lastGeneratedUrl) showResult(lastGeneratedUrl, ta.value || 'AI generated image');
-}
-
-function selectStyle(id) {
-  selectedStyle = id;
-  document.querySelectorAll('.style-card').forEach(el => el.classList.remove('selected'));
-  document.querySelectorAll('.style-card').forEach(el => {
-    if (el.getAttribute('onclick').includes(id)) el.classList.add('selected');
+    document.getElementById('char-count').textContent = ta.value.length + '/400';
   });
 }
 
-function selectSize(id) {
-  selectedSize = id;
-  document.querySelectorAll('.size-chip').forEach(el => el.classList.remove('selected'));
-  document.querySelectorAll('.size-chip').forEach(el => {
-    if (el.getAttribute('onclick').includes(id)) el.classList.add('selected');
-  });
+function switchMode(mode) {
+  createMode = mode;
+  renderPage();
 }
 
-async function enhancePrompt() {
-  const ta = document.getElementById('prompt-input');
-  const prompt = ta.value.trim();
-  if (!prompt) { toast('Type a prompt first!', 'info'); return; }
-  const btn = document.getElementById('enhance-btn');
-  btn.textContent = '...'; btn.disabled = true;
-  try {
-    const url = `https://text.pollinations.ai/${encodeURIComponent('Enhance this image generation prompt to be more detailed and vivid (return only the enhanced prompt, max 200 chars): ' + prompt)}`;
-    const r = await fetch(url);
-    const text = await r.text();
-    if (text && text.length > 10) {
-      ta.value = text.trim().substring(0, 498);
-      document.getElementById('char-count').textContent = `${ta.value.length} / 500`;
-      toast('Prompt enhanced! ✨', 'success');
-    }
-  } catch(e) { toast('Could not enhance, try again', 'error'); }
-  btn.innerHTML = `<svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09z"/></svg> Enhance`;
-  btn.disabled = false;
-}
-
-async function generateImage() {
-  const ta = document.getElementById('prompt-input');
-  const prompt = ta.value.trim();
-  if (!prompt) { toast('Please enter a prompt!', 'info'); ta.focus(); return; }
-  if (generating) return;
-  generating = true;
-  const btn = document.getElementById('gen-btn');
-  btn.disabled = true;
-  btn.innerHTML = `<div class="spinner"></div> Generating...`;
-  document.getElementById('result-area').innerHTML = `
-    <div style="border-radius:16px;overflow:hidden;aspect-ratio:1;background:#16162a;border:1px solid #2a2a45;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;margin-bottom:20px;">
-      <div class="spinner" style="width:36px;height:36px;border-width:4px;"></div>
-      <p style="color:#9ca3af;font-size:14px;">Creating your image...</p>
-      <p style="color:#6b7280;font-size:12px;">Powered by Pollinations.ai — free & unlimited</p>
-    </div>`;
-
-  const styleObj = STYLES.find(s => s.id === selectedStyle);
-  const sizeObj = SIZES.find(s => s.id === selectedSize);
-  const fullPrompt = `${prompt}, ${styleObj.prompt}`;
-  const seed = Math.floor(Math.random() * 99999);
-  const url = pollinationsUrl(fullPrompt, sizeObj.w, sizeObj.h, seed);
-
-  const img = new Image();
-  img.crossOrigin = 'anonymous';
-  let retries = 0;
-  const tryLoad = () => {
-    img.src = url + `&t=${Date.now()}`;
-  };
-  img.onload = () => {
-    lastGeneratedUrl = url;
-    generating = false;
-    btn.disabled = false;
-    btn.innerHTML = `<svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="white" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09z"/></svg> Generate Again`;
-    toast('Image generated! 🎨', 'success');
-    // Save to gallery
-    gallery.push({ url, prompt: prompt.substring(0,80), style: styleObj.name, ts: Date.now() });
-    saveGallery();
-    showResult(url, prompt);
-  };
-  img.onerror = () => {
-    retries++;
-    if (retries < 3) {
-      setTimeout(tryLoad, 3000);
-      document.getElementById('result-area').innerHTML = `
-        <div style="border-radius:16px;aspect-ratio:1;background:#16162a;border:1px solid #2a2a45;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;margin-bottom:20px;padding:20px;text-align:center;">
-          <div class="spinner" style="width:36px;height:36px;border-width:4px;"></div>
-          <p style="color:#9ca3af;font-size:14px;">Retrying... (${retries}/3)</p>
-          <p style="color:#6b7280;font-size:12px;">AI is generating your image, please wait...</p>
-        </div>`;
-    } else {
-      generating = false;
-      btn.disabled = false;
-      btn.innerHTML = `<svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="white" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09z"/></svg> Generate Image`;
-      document.getElementById('result-area').innerHTML = `
-        <div style="border-radius:16px;padding:24px;background:#1a0a0a;border:1px solid #4b1c1c;text-align:center;margin-bottom:20px;">
-          <p style="font-size:32px;margin-bottom:12px;">😞</p>
-          <p style="color:#f87171;font-size:15px;font-weight:600;margin-bottom:8px;">Generation failed</p>
-          <p style="color:#9ca3af;font-size:13px;margin-bottom:16px;">The AI service may be busy. Try a different prompt or try again.</p>
-          <button onclick="generateImage()" style="background:linear-gradient(135deg,#7c3aed,#06b6d4);border:none;color:white;padding:12px 24px;border-radius:50px;font-size:14px;font-weight:600;cursor:pointer;">Try Again</button>
-        </div>`;
-      toast('Generation failed. Please try again.', 'error');
-    }
-  };
-  tryLoad();
-}
-
-function showResult(url, prompt) {
-  document.getElementById('result-area').innerHTML = `
-    <div class="result-box">
-      <img src="${url}" alt="${prompt}" class="result-img" onclick="openLightbox('${url}')">
-      <div class="result-actions">
-        <button class="result-btn primary" onclick="downloadImage('${url}')">
-          <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="white" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3"/></svg>
-          Save
-        </button>
-        <button class="result-btn secondary" onclick="openLightbox('${url}')">
-          🔍 View Full
-        </button>
-        <button class="result-btn secondary" onclick="useForEffects('${url}')">
-          ✨ Effects
-        </button>
-      </div>
-    </div>`;
-}
-
-// ============================================
-// EFFECTS PAGE
-// ============================================
-function renderEffects(c) {
-  c.innerHTML = `
-    <div class="effects-page">
-      <div style="display:flex;align-items:center;gap:12px;margin-bottom:4px;">
-        <button onclick="setPage('home')" style="background:var(--card);border:1px solid var(--border);border-radius:50%;width:36px;height:36px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:18px;color:var(--text);">←</button>
-        <div>
-          <div class="create-title">✨ Photo Effects</div>
-          <div class="create-subtitle" style="margin:0;">Apply AI-powered filters</div>
-        </div>
-      </div>
-
-      <div style="margin:16px 0;">
-        ${effectsImage ? `
-          <div style="border-radius:16px;overflow:hidden;margin-bottom:12px;position:relative;">
-            <img id="effects-preview" src="${effectsImage}" style="width:100%;max-height:260px;object-fit:cover;border-radius:16px;filter:${selectedEffect ? EFFECTS.find(e=>e.id===selectedEffect)?.filter || 'none' : 'none'}">
-          </div>
-          <button onclick="clearEffectsImage()" style="background:rgba(239,68,68,0.15);border:1px solid rgba(239,68,68,0.3);color:#f87171;padding:8px 16px;border-radius:20px;font-size:13px;cursor:pointer;">✕ Remove Image</button>
-        ` : `
-          <label class="upload-area" for="effects-file-input">
-            <div class="upload-icon">📸</div>
-            <strong>Upload a photo</strong>
-            <p>Tap to pick from gallery</p>
-            <input type="file" id="effects-file-input" accept="image/*" style="display:none" onchange="handleEffectsUpload(event)">
-          </label>
-        `}
-      </div>
-
-      <div class="section-label">🎨 Filter Effects</div>
-      <div class="effects-grid" id="effects-grid">
-        ${EFFECTS.map(e => `
-          <div class="effect-card ${selectedEffect === e.id ? 'selected' : ''}" onclick="selectEffect('${e.id}')">
-            ${effectsImage ? `<img src="${effectsImage}" style="width:100%;height:100%;object-fit:cover;filter:${e.filter || 'none'}">` : `<span class="no-img">${e.id === 'none' ? '🖼' : '🎨'}</span>`}
-            <div class="effect-label">${e.name}</div>
-          </div>
-        `).join('')}
-      </div>
-
-      <button class="apply-effect-btn" onclick="applyEffect()" ${!effectsImage || !selectedEffect || selectedEffect === 'none' ? 'disabled' : ''}>
-        ✨ Save with Effect
-      </button>
-    </div>`;
-}
-
-function clearEffectsImage() {
-  effectsImage = null; selectedEffect = null; renderPage();
-}
-
-function handleEffectsUpload(e) {
-  const file = e.target.files[0];
+function handleCreateImgUpload(input) {
+  const file = input.files[0];
   if (!file) return;
   const reader = new FileReader();
-  reader.onload = (ev) => {
-    effectsImage = ev.target.result;
-    renderPage();
-    toast('Photo loaded! Choose an effect below.', 'success');
+  reader.onload = (e) => {
+    uploadedImage = e.target.result;
+    const area = document.getElementById('upload-area');
+    area.innerHTML = `
+      <div class="img-preview-wrap" style="margin:0">
+        <img src="${uploadedImage}" style="width:100%;max-height:200px;object-fit:cover;border-radius:12px;display:block;">
+        <button class="remove-img" onclick="event.stopPropagation();removeUploadedImg()">✕</button>
+      </div>`;
+    toast('Image uploaded! ✓', 'success');
   };
   reader.readAsDataURL(file);
 }
 
-function selectEffect(id) {
-  selectedEffect = id;
-  // Update preview
-  const preview = document.getElementById('effects-preview');
-  if (preview) {
-    const ef = EFFECTS.find(e => e.id === id);
-    preview.style.filter = ef?.filter || 'none';
-  }
-  // Update grid selections
-  document.querySelectorAll('.effect-card').forEach(el => el.classList.remove('selected'));
-  document.querySelectorAll('.effect-card').forEach(el => {
-    if (el.getAttribute('onclick').includes(`'${id}'`)) el.classList.add('selected');
-  });
-  // Update apply button
-  const btn = document.querySelector('.apply-effect-btn');
-  if (btn) btn.disabled = !effectsImage || !selectedEffect || selectedEffect === 'none';
+function removeUploadedImg() {
+  uploadedImage = null;
+  const area = document.getElementById('upload-area');
+  area.innerHTML = `
+    <div id="upload-content">
+      <div class="upload-ico">📷</div>
+      <p>Tap to upload a reference image</p>
+      <p class="upload-hint">JPG, PNG, WEBP supported</p>
+    </div>`;
 }
 
-function applyEffect() {
-  if (!effectsImage || !selectedEffect) return;
-  const ef = EFFECTS.find(e => e.id === selectedEffect);
-  if (!ef || !ef.filter) return;
-  const src = document.getElementById('effect-source');
-  const out = document.getElementById('effect-output');
+function selectStyle(id) {
+  selectedStyle = id;
+  document.querySelectorAll('.style-chip').forEach(el => {
+    const s = STYLES.find(s=>s.id===el.dataset.id||el.textContent.includes(STYLES.find(x=>x.id===id)?.icon));
+    el.classList.toggle('active', el.onclick?.toString().includes(`'${id}'`));
+  });
+  renderPage();
+}
+
+function selectSize(id, w, h) {
+  selectedSize = {id,w,h};
+  renderPage();
+}
+
+async function enhancePrompt() {
+  const ta = document.getElementById('create-prompt');
+  const prompt = ta.value.trim();
+  if (!prompt) { toast('Type a prompt first!', 'error'); return; }
+  toast('✨ Enhancing your prompt...', 'info');
+  try {
+    const url = `https://text.pollinations.ai/${encodeURIComponent('Enhance this image prompt to be more detailed and creative (return ONLY the enhanced prompt, max 180 chars): ' + prompt)}`;
+    const res = await fetch(url);
+    const text = await res.text();
+    if (text && text.length > 5) {
+      ta.value = text.trim().substring(0,400);
+      document.getElementById('char-count').textContent = ta.value.length + '/400';
+      toast('Prompt enhanced! 🪄', 'success');
+    }
+  } catch(e) { toast('Could not enhance, try again', 'error'); }
+}
+
+function generateImage() {
+  const ta = document.getElementById('create-prompt');
+  const prompt = ta.value.trim();
+  if (!prompt) { toast('Please describe your image!', 'error'); return; }
+
+  const btn = document.getElementById('gen-btn');
+  btn.disabled = true;
+  btn.innerHTML = '⏳ Generating...';
+  genRetries = 0;
+
+  const styleObj = STYLES.find(s=>s.id===selectedStyle) || STYLES[0];
+  const fullPrompt = selectedStyle !== 'none' ? `${prompt}, ${styleObj.name} style, highly detailed, masterpiece` : `${prompt}, highly detailed, masterpiece`;
+  const seed = Math.floor(Math.random()*99999);
+  const url = pUrl(fullPrompt, selectedSize.w, selectedSize.h, seed);
+
+  const resultArea = document.getElementById('result-area');
+  let progress = 0;
+  resultArea.innerHTML = `
+    <div class="generating-state">
+      <div class="gen-spinner"></div>
+      <div class="gen-status" id="gen-status">Creating your artwork...</div>
+      <div class="gen-sub" id="gen-sub">This takes 10–20 seconds. Hang tight! ☕</div>
+      <div class="gen-progress"><div class="gen-progress-bar" id="gen-bar" style="width:5%"></div></div>
+    </div>`;
+  resultArea.scrollIntoView({behavior:'smooth',block:'start'});
+
+  const interval = setInterval(() => {
+    progress = Math.min(progress + 3, 90);
+    const bar = document.getElementById('gen-bar');
+    const status = document.getElementById('gen-status');
+    const sub = document.getElementById('gen-sub');
+    if (bar) bar.style.width = progress + '%';
+    if (progress > 40 && status) status.textContent = 'Adding details...';
+    if (progress > 70 && status) status.textContent = 'Almost done...';
+    if (progress > 50 && sub) sub.textContent = 'Almost there! 🎨';
+  }, 600);
+
+  const img = new Image();
+  img.crossOrigin = 'anonymous';
+
+  const tryLoad = (attempt) => {
+    img.src = url + `&_a=${attempt}&t=${Date.now()}`;
+  };
+
+  img.onload = () => {
+    clearInterval(interval);
+    addToGallery(url, prompt, styleObj.name);
+    resultArea.innerHTML = `
+      <div class="result-wrap">
+        <div class="result-img-wrap">
+          <img src="${img.src}" alt="${prompt}" onclick="openLightbox('${img.src}')">
+          <span class="result-badge">✓ Generated</span>
+        </div>
+        <div class="result-actions">
+          <button class="result-act-btn save" onclick="addToGallery('${url}','${prompt.replace(/'/g,"\\'")}','${styleObj.name}')">🖼 Gallery</button>
+          <button class="result-act-btn download" onclick="downloadImage('${img.src}')">⬇ Save</button>
+          <button class="result-act-btn share" onclick="shareImage('${img.src}','${prompt.replace(/'/g,"\\'")}')">📤 Share</button>
+          <button class="result-act-btn remix" onclick="document.getElementById('create-prompt').value='${prompt.replace(/'/g,"\\'")}';window.scrollTo(0,0)">🔄 Remix</button>
+        </div>
+        <div style="margin-top:12px;padding:12px;background:var(--bg3);border-radius:14px;border:1px solid var(--border);">
+          <div style="font-size:11px;color:var(--muted);margin-bottom:4px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;">Prompt Used</div>
+          <div style="font-size:13px;color:var(--text);line-height:1.5">${prompt}</div>
+        </div>
+      </div>`;
+    btn.disabled = false;
+    btn.innerHTML = '✨ Generate Again';
+    toast('Image created! 🎉', 'success');
+  };
+
+  img.onerror = () => {
+    if (genRetries < 2) {
+      genRetries++;
+      const status = document.getElementById('gen-status');
+      const sub = document.getElementById('gen-sub');
+      if (status) status.textContent = `Retrying... (attempt ${genRetries+1}/3)`;
+      if (sub) sub.textContent = 'Slow connection? Hang on...';
+      setTimeout(() => tryLoad(genRetries), 5000);
+    } else {
+      clearInterval(interval);
+      resultArea.innerHTML = `
+        <div style="text-align:center;padding:30px 20px;background:var(--bg3);border-radius:var(--radius);margin-top:16px;border:1px solid var(--border);">
+          <div style="font-size:40px;margin-bottom:12px">⚠️</div>
+          <div style="font-size:16px;font-weight:700;margin-bottom:6px">Generation Failed</div>
+          <div style="font-size:13px;color:var(--muted);margin-bottom:16px">Check your internet connection and try again</div>
+          <button class="btn-primary" onclick="generateImage()">🔄 Try Again</button>
+          <div style="margin-top:12px">
+            <a href="${url}" target="_blank" style="font-size:12px;color:var(--accent2);">Open directly in browser →</a>
+          </div>
+        </div>`;
+      btn.disabled = false;
+      btn.innerHTML = '✨ Generate Image';
+    }
+  };
+
+  tryLoad(0);
+}
+
+function shareImage(url, prompt) {
+  if (navigator.share) {
+    navigator.share({ title: 'LuminaAI Creation', text: prompt, url: url })
+      .then(() => toast('Shared! 🚀', 'success'))
+      .catch(() => toast('Share cancelled', 'info'));
+  } else {
+    navigator.clipboard?.writeText(url).then(() => toast('Image URL copied! 📋', 'success'));
+  }
+}
+
+// ==================== EFFECTS ====================
+function renderEffects(c) {
+  c.innerHTML = `
+    <div class="effects-page">
+      <div style="text-align:center;padding:16px 0 20px">
+        <h2 style="font-size:22px;font-weight:900;margin-bottom:6px">🎨 Photo Effects</h2>
+        <p style="font-size:13px;color:var(--muted)">Upload a photo and apply stunning AI effects</p>
+      </div>
+
+      ${effectsImage ? `
+        <div class="effects-preview">
+          <canvas id="effects-canvas" style="width:100%;border-radius:var(--radius);display:block"></canvas>
+          <button class="change-img" onclick="changeEffectsImg()">📷 Change</button>
+        </div>
+        <input type="file" id="eff-input" accept="image/*" style="display:none" onchange="handleEffectsUpload(this)">
+      ` : `
+        <div class="effects-upload" onclick="document.getElementById('eff-input').click()">
+          <div class="up-ico">📷</div>
+          <h3>Upload Your Photo</h3>
+          <p>Tap to select a photo from your gallery</p>
+          <div style="margin-top:12px;padding:8px 16px;background:rgba(124,58,237,0.15);border:1px solid rgba(124,58,237,0.3);border-radius:50px;display:inline-block;font-size:13px;color:var(--accent2);font-weight:600">📁 Browse Photos</div>
+        </div>
+        <input type="file" id="eff-input" accept="image/*" style="display:none" onchange="handleEffectsUpload(this)">
+      `}
+
+      <div style="font-size:12px;font-weight:700;color:var(--muted);margin-bottom:10px;text-transform:uppercase;letter-spacing:1px;">Choose Effect</div>
+      <div class="effects-grid">
+        ${EFFECTS.map(e=>`
+          <div class="effect-tile ${selectedEffect===e.id?'selected':''}" onclick="selectEffect('${e.id}')">
+            ${effectsImage ? `<img class="ef-preview" src="${effectsImage}" style="filter:${e.filter}" alt="${e.name}">` : `<div style="width:100%;height:100%;background:var(--bg2)"></div>`}
+            <div class="ef-overlay">
+              <span class="ef-ico">${e.icon}</span>
+              <span class="ef-name">${e.name}</span>
+            </div>
+          </div>
+        `).join('')}
+      </div>
+
+      <button class="apply-btn" id="apply-btn" ${!effectsImage?'disabled':''} onclick="applyEffect()">
+        ${!effectsImage ? '📷 Upload photo first' : '✨ Apply & Save Effect'}
+      </button>
+    </div>
+  `;
+  if (effectsImage) drawCanvas();
+}
+
+function handleEffectsUpload(input) {
+  const file = input.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    effectsImage = e.target.result;
+    renderPage();
+    toast('Photo uploaded! Pick an effect ✨', 'success');
+  };
+  reader.readAsDataURL(file);
+}
+
+function changeEffectsImg() {
+  document.getElementById('eff-input').click();
+}
+
+function selectEffect(id) {
+  selectedEffect = id;
+  renderPage();
+}
+
+function drawCanvas() {
+  const canvas = document.getElementById('effects-canvas');
+  if (!canvas || !effectsImage) return;
+  const ef = EFFECTS.find(e=>e.id===selectedEffect) || EFFECTS[0];
   const img = new Image();
   img.onload = () => {
-    src.width = img.width; src.height = img.height;
-    out.width = img.width; out.height = img.height;
-    const ctx = src.getContext('2d');
-    ctx.filter = ef.filter;
+    canvas.width = img.width;
+    canvas.height = img.height;
+    const ctx = canvas.getContext('2d');
+    ctx.filter = ef.filter || 'none';
     ctx.drawImage(img, 0, 0);
-    out.getContext('2d').drawImage(src, 0, 0);
-    const dataUrl = out.toDataURL('image/jpeg', 0.92);
-    gallery.push({ url: dataUrl, prompt: `${ef.name} effect applied`, style: 'Effect', ts: Date.now() });
-    saveGallery();
-    const a = document.createElement('a');
-    a.href = dataUrl; a.download = `lumina-${ef.name.toLowerCase()}.jpg`; a.click();
-    toast(`${ef.name} effect saved to gallery! 🎨`, 'success');
   };
   img.src = effectsImage;
 }
 
-function useForEffects(url) {
-  effectsImage = url;
-  selectedEffect = null;
-  setPage('effects');
+function applyEffect() {
+  if (!effectsImage) { toast('Upload a photo first!', 'error'); return; }
+  const canvas = document.getElementById('effects-canvas');
+  const ef = EFFECTS.find(e=>e.id===selectedEffect) || EFFECTS[0];
+  if (!canvas) { toast('Error applying effect', 'error'); return; }
+  const img2 = new Image();
+  img2.onload = () => {
+    canvas.width = img2.width;
+    canvas.height = img2.height;
+    const ctx = canvas.getContext('2d');
+    ctx.filter = ef.filter || 'none';
+    ctx.drawImage(img2, 0, 0);
+    const dataUrl = canvas.toDataURL('image/jpeg', 0.92);
+    addToGallery(dataUrl, `${ef.name} effect applied`, 'Effect');
+    toast(`${ef.name} effect saved! 🎨`, 'success');
+  };
+  img2.src = effectsImage;
 }
 
-// ============================================
-// EXPLORE PAGE
-// ============================================
+// ==================== VOICE ==================== 
+function renderVoice(c) {
+  c.innerHTML = `
+    <div class="voice-page">
+      <div class="voice-hero">
+        <h2>🗣 Voice AI</h2>
+        <p>Convert any text to natural speech — free, 8 languages</p>
+      </div>
+
+      <div class="voice-input-box">
+        <textarea id="voice-text" placeholder="Type anything you want to hear... e.g. Hello! I am LuminaAI, your creative AI companion." rows="4">${voiceText||''}</textarea>
+      </div>
+
+      <div style="font-size:12px;font-weight:700;color:var(--muted);margin-bottom:8px;text-transform:uppercase;letter-spacing:1px;">Language</div>
+      <div class="voice-langs">
+        ${LANGUAGES.map(l=>`<div class="lang-chip ${selectedLang===l.code?'active':''}" onclick="selectLang('${l.code}')">${l.name}</div>`).join('')}
+      </div>
+
+      <div class="voice-controls">
+        <div class="voice-ctrl">
+          <label>⚡ Speed: <span id="rate-val">${voiceRate}x</span></label>
+          <input type="range" min="0.5" max="2" step="0.1" value="${voiceRate}" oninput="voiceRate=parseFloat(this.value);document.getElementById('rate-val').textContent=voiceRate+'x'">
+        </div>
+        <div class="voice-ctrl">
+          <label>🎵 Pitch: <span id="pitch-val">${voicePitch}</span></label>
+          <input type="range" min="0.5" max="2" step="0.1" value="${voicePitch}" oninput="voicePitch=parseFloat(this.value);document.getElementById('pitch-val').textContent=voicePitch">
+        </div>
+      </div>
+
+      <button class="speak-btn ${isSpeaking?'speaking':''}" id="speak-btn" onclick="toggleSpeak()">
+        ${isSpeaking ? '⏹ Stop Speaking' : '▶ Speak Now'}
+      </button>
+
+      <div style="margin-top:16px;padding:14px;background:var(--bg3);border-radius:14px;border:1px solid var(--border);">
+        <div style="font-size:12px;color:var(--muted);font-weight:700;margin-bottom:8px;text-transform:uppercase;letter-spacing:1px;">Quick Phrases</div>
+        <div style="display:flex;flex-wrap:wrap;gap:8px;">
+          ${['Hello World!','Welcome to LuminaAI!','AI art is amazing!','Create something beautiful today','The future is now'].map(p=>`
+            <div onclick="document.getElementById('voice-text').value='${p}'" style="padding:7px 12px;background:rgba(124,58,237,0.12);border:1px solid rgba(124,58,237,0.2);border-radius:50px;font-size:12px;color:var(--accent2);cursor:pointer;font-weight:600">${p}</div>
+          `).join('')}
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+let voiceText = '';
+function selectLang(code) { selectedLang = code; renderPage(); }
+function toggleSpeak() {
+  voiceText = document.getElementById('voice-text')?.value?.trim() || '';
+  if (!voiceText) { toast('Type some text first!', 'error'); return; }
+  if (isSpeaking) {
+    window.speechSynthesis.cancel();
+    isSpeaking = false;
+    const btn = document.getElementById('speak-btn');
+    if (btn) { btn.textContent = '▶ Speak Now'; btn.classList.remove('speaking'); }
+    return;
+  }
+  if (!window.speechSynthesis) { toast('Voice not supported in this browser', 'error'); return; }
+  const utt = new SpeechSynthesisUtterance(voiceText);
+  utt.lang = selectedLang;
+  utt.rate = voiceRate;
+  utt.pitch = voicePitch;
+  utt.onstart = () => {
+    isSpeaking = true;
+    const btn = document.getElementById('speak-btn');
+    if (btn) { btn.textContent = '⏹ Stop Speaking'; btn.classList.add('speaking'); }
+    toast('Speaking... 🗣', 'info');
+  };
+  utt.onend = () => {
+    isSpeaking = false;
+    const btn = document.getElementById('speak-btn');
+    if (btn) { btn.textContent = '▶ Speak Now'; btn.classList.remove('speaking'); }
+  };
+  utt.onerror = () => { isSpeaking = false; toast('Voice error. Try again.', 'error'); };
+  window.speechSynthesis.speak(utt);
+}
+
+// ==================== EXPLORE ====================
 function renderExplore(c) {
-  const prompts = EXPLORE_PROMPTS[exploreCat] || EXPLORE_PROMPTS.all;
   c.innerHTML = `
     <div class="explore-page">
       <div class="explore-search">
-        <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="#6b7280" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z"/></svg>
-        <input type="text" placeholder="Search styles, themes..." id="explore-search-input" onkeydown="if(event.key==='Enter')exploreSearch(this.value)">
+        <div class="search-input-wrap">
+          <span style="font-size:16px">🔍</span>
+          <input type="text" id="explore-q" placeholder="Search art styles, themes..." onkeydown="if(event.key==='Enter')doSearch()">
+        </div>
+        <button class="search-btn" onclick="doSearch()">Go</button>
       </div>
-      <div class="explore-categories">
-        ${EXPLORE_CATS.map(cat => `<div class="cat-chip ${exploreCat === cat.id ? 'active' : ''}" onclick="setExploreCat('${cat.id}')">${cat.label}</div>`).join('')}
+
+      <div class="category-tabs" id="cat-tabs">
+        ${EXPLORE_CATS.map(c=>`<div class="cat-tab ${exploreCat===c.name?'active':''}" onclick="setExploreCat('${c.name}')">${c.emoji} ${c.name}</div>`).join('')}
       </div>
-      <div class="explore-grid" id="explore-grid">
-        ${prompts.map((p, i) => `
-          <div class="explore-card" id="exp-${i}" onclick="openLightbox('${pollinationsUrl(p, 512, 512, 2000+i)}')">
-            <div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;" class="skeleton"></div>
-          </div>
-        `).join('')}
+
+      <div style="margin-bottom:12px;display:flex;align-items:center;justify-content:space-between;">
+        <span style="font-size:14px;font-weight:700">${exploreCat} Art</span>
+        <span style="font-size:12px;color:var(--muted)">Real AI Generated</span>
       </div>
-    </div>`;
-  // Load images
-  prompts.forEach((p, i) => {
-    const card = document.getElementById(`exp-${i}`);
-    if (!card) return;
-    const url = pollinationsUrl(p, 512, 512, 2000+i);
-    const img = new Image();
-    img.onload = () => {
-      card.innerHTML = `
-        <img src="${url}" alt="${p}" loading="lazy">
-        <div class="explore-card-overlay"><span>${p}</span></div>
-      `;
-    };
-    img.onerror = () => { card.innerHTML = `<div style="display:flex;align-items:center;justify-content:center;height:100%;font-size:32px;">🎨</div>`; };
-    img.src = url;
-  });
+
+      <div class="explore-grid" id="explore-grid"></div>
+    </div>
+  `;
+  loadExploreImages();
 }
 
-function setExploreCat(id) {
-  exploreCat = id;
-  renderExplore(document.getElementById('page-content'));
+function setExploreCat(cat) {
+  exploreCat = cat;
+  renderPage();
 }
 
-function exploreSearch(query) {
-  if (!query.trim()) return;
-  const c = document.getElementById('page-content');
-  const prompts = [query, `${query} art`, `${query} detailed`, `${query} beautiful`, `${query} cinematic`];
+function doSearch() {
+  const q = document.getElementById('explore-q')?.value?.trim();
+  if (!q) return;
   const grid = document.getElementById('explore-grid');
   if (!grid) return;
-  grid.innerHTML = prompts.map((p, i) => `
-    <div class="explore-card" id="es-${i}" onclick="openLightbox('${pollinationsUrl(p, 512, 512, 5000+i)}')">
-      <div style="width:100%;height:100%;" class="skeleton"></div>
-    </div>`).join('');
+  grid.innerHTML = '';
+  const prompts = [
+    `${q} digital art detailed`,
+    `${q} fantasy illustration`,
+    `${q} photorealistic render`,
+    `${q} anime art style`,
+  ];
   prompts.forEach((p, i) => {
-    const card = document.getElementById(`es-${i}`);
-    if (!card) return;
-    const url = pollinationsUrl(p, 512, 512, 5000+i);
+    const card = document.createElement('div');
+    card.className = 'explore-card';
+    card.innerHTML = `<div class="shimmer" style="width:100%;height:100%"></div>`;
+    const url = pUrl(p, 512, 512, 8000+i+Math.floor(Math.random()*1000));
+    card.onclick = () => openLightbox(url);
+    grid.appendChild(card);
     const img = new Image();
-    img.onload = () => { card.innerHTML = `<img src="${url}" alt="${p}" loading="lazy"><div class="explore-card-overlay"><span>${p}</span></div>`; };
-    img.onerror = () => { card.innerHTML = `<div style="display:flex;align-items:center;justify-content:center;height:100%;font-size:32px;">🎨</div>`; };
-    img.src = url;
+    let retries = 0;
+    const load = () => { img.src = url + `&_r=${retries}`; };
+    img.onload = () => {
+      card.innerHTML = `<img src="${img.src}" alt="${q}"><div class="exp-overlay"><span class="exp-label">${q}</span></div>`;
+    };
+    img.onerror = () => {
+      if (retries < 1) { retries++; setTimeout(load, 5000); }
+      else card.innerHTML = `<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:24px">🎨</div>`;
+    };
+    load();
+  });
+  toast(`Searching: ${q} 🔍`, 'info');
+}
+
+function loadExploreImages() {
+  const grid = document.getElementById('explore-grid');
+  if (!grid) return;
+  const items = EXPLORE_ITEMS.filter(i=>i.cat===exploreCat);
+  const extra = items.length < 6 ? EXPLORE_ITEMS.slice(0,4) : [];
+  const all = [...items, ...extra].slice(0,8);
+  all.forEach((item, i) => {
+    const seed = 3000 + EXPLORE_CATS.findIndex(c=>c.name===exploreCat)*100 + i;
+    const url = pUrl(item.p, 512, 512, seed);
+    const card = document.createElement('div');
+    card.className = 'explore-card';
+    card.innerHTML = `<div class="shimmer" style="width:100%;height:100%"></div>`;
+    card.onclick = () => openLightbox(url);
+    grid.appendChild(card);
+    const img = new Image();
+    let retries = 0;
+    const load = () => { img.src = url + `&_r=${retries}`; };
+    img.onload = () => {
+      card.innerHTML = `<img src="${img.src}" alt="${item.label}"><div class="exp-overlay"><span class="exp-label">${item.label}</span></div>`;
+    };
+    img.onerror = () => {
+      if (retries < 1) { retries++; setTimeout(load, 5000); }
+      else card.innerHTML = `<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;gap:4px;flex-direction:column;"><div style="font-size:24px">🎨</div><div style="font-size:9px;color:var(--muted);text-align:center;padding:4px">${item.label}</div></div>`;
+    };
+    load();
   });
 }
 
-// ============================================
-// GALLERY PAGE
-// ============================================
+// ==================== GALLERY ====================
 function renderGallery(c) {
   c.innerHTML = `
     <div class="gallery-page">
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
-        <div>
-          <div class="create-title">🖼 My Gallery</div>
-          <div class="create-subtitle">${gallery.length} image${gallery.length !== 1 ? 's' : ''} saved</div>
-        </div>
-        ${gallery.length > 0 ? `<button onclick="clearGallery()" style="background:rgba(239,68,68,0.15);border:1px solid rgba(239,68,68,0.3);color:#f87171;padding:8px 14px;border-radius:20px;font-size:13px;cursor:pointer;">Clear All</button>` : ''}
+      <div class="gallery-hdr">
+        <h2>🖼 My Gallery</h2>
+        ${gallery.length > 0 ? `<button class="clear-btn" onclick="clearGallery()">🗑 Clear All</button>` : ''}
       </div>
+      <div style="font-size:13px;color:var(--muted);margin-bottom:16px;">${gallery.length} image${gallery.length!==1?'s':''} saved locally</div>
       ${gallery.length === 0 ? `
-        <div class="empty-state">
-          <div class="empty-icon">🎨</div>
-          <strong>No images yet</strong>
-          <p>Generate your first AI image and it'll appear here!</p>
-          <br>
-          <button onclick="setPage('create')" style="margin-top:16px;background:linear-gradient(135deg,#7c3aed,#06b6d4);border:none;color:white;padding:14px 28px;border-radius:50px;font-size:15px;font-weight:600;cursor:pointer;">Create Now ✦</button>
+        <div class="gallery-empty">
+          <div class="empty-ico">🎨</div>
+          <h3>No images yet</h3>
+          <p>Generate AI images and save them to your gallery</p>
+          <button class="btn-primary" style="margin-top:20px" onclick="setPage('create')">✨ Create First Image</button>
         </div>
       ` : `
         <div class="gallery-grid">
-          ${[...gallery].reverse().map((item, i) => `
-            <div class="gallery-item" onclick="openLightbox('${item.url.replace(/'/g, "\\'")}')">
+          ${[...gallery].reverse().map((item,i) => `
+            <div class="gallery-item" onclick="openLightbox('${item.url.replace(/'/g,"\\'")}')">
               <img src="${item.url}" alt="${item.prompt}" loading="lazy">
-              <button class="del-btn" onclick="event.stopPropagation();deleteGallery(${gallery.length-1-i})">✕</button>
+              <button class="g-del" onclick="event.stopPropagation();deleteGallery(${gallery.length-1-i})">✕</button>
+              <div class="g-label">${item.style||'AI'}</div>
             </div>
           `).join('')}
         </div>
       `}
-    </div>`;
+    </div>
+  `;
 }
 
-function deleteGallery(index) {
-  gallery.splice(index, 1);
-  saveGallery();
-  renderPage();
-  toast('Image removed', 'info');
-}
-
-function clearGallery() {
-  if (confirm('Clear all saved images?')) {
-    gallery = []; saveGallery(); renderPage(); toast('Gallery cleared', 'info');
-  }
-}
-
-// ============================================
-// VOICE AI PAGE
-// ============================================
-function renderVoice(c) {
-  const supported = 'speechSynthesis' in window;
-  c.innerHTML = `
-    <div class="voice-page">
-      <div style="display:flex;align-items:center;gap:12px;margin-bottom:20px;">
-        <button onclick="setPage('home')" style="background:var(--card);border:1px solid var(--border);border-radius:50%;width:36px;height:36px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:18px;color:var(--text);">←</button>
-        <div>
-          <div class="create-title">🎙 Voice AI</div>
-          <div class="create-subtitle" style="margin:0;">Text to speech — free, instant</div>
-        </div>
-      </div>
-
-      ${!supported ? `<div style="background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.3);border-radius:12px;padding:16px;color:#f87171;text-align:center;">Voice AI requires a modern browser with speech synthesis support.</div>` : `
-
-      <div class="voice-card">
-        <div style="font-size:14px;color:#9ca3af;margin-bottom:8px;">🌍 Language & Voice</div>
-        <div class="voice-languages">
-          ${LANGUAGES.map(l => `<div class="lang-chip ${selectedLang === l.code ? 'active' : ''}" onclick="selectedLang='${l.code}';document.querySelectorAll('.lang-chip').forEach(e=>e.classList.remove('active'));this.classList.add('active')">${l.label}</div>`).join('')}
-        </div>
-      </div>
-
-      <div class="voice-card">
-        <div style="font-size:14px;color:#9ca3af;margin-bottom:12px;">💬 Enter text to speak</div>
-        <textarea class="voice-input" id="voice-text" rows="4" placeholder="Type anything here and AI will speak it in your chosen language...">${'Hello! I am LuminaAI, your personal AI art studio. I can generate amazing images for free!'}</textarea>
-        <button class="speak-btn" id="speak-btn" onclick="speakText()">
-          <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="white" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19.114 5.636a9 9 0 010 12.728M16.463 8.288a5.25 5.25 0 010 7.424M6.75 8.25l4.72-4.72a.75.75 0 011.28.53v15.88a.75.75 0 01-1.28.53l-4.72-4.72H4.51c-.88 0-1.704-.507-1.938-1.354A9.01 9.01 0 012.25 12c0-.83.112-1.633.322-2.396C2.806 8.756 3.63 8.25 4.51 8.25H6.75z"/></svg>
-          Speak Aloud
-        </button>
-      </div>
-
-      <div class="voice-card">
-        <div style="font-size:14px;color:#9ca3af;margin-bottom:12px;">⚡ Quick phrases</div>
-        <div style="display:flex;flex-direction:column;gap:8px;">
-          ${[
-            'Create a beautiful sunset painting',
-            'Generate a futuristic robot portrait',
-            'Make an anime character with blue eyes',
-            'Draw a magical forest at night',
-          ].map(p => `<button onclick="document.getElementById('voice-text').value='${p}'" style="background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:12px;color:var(--text);text-align:left;font-size:13px;cursor:pointer;">${p}</button>`).join('')}
-        </div>
-      </div>
-      `}
-    </div>`;
-}
-
-function speakText() {
-  const text = document.getElementById('voice-text')?.value?.trim();
-  if (!text) { toast('Enter some text first!', 'info'); return; }
-  window.speechSynthesis.cancel();
-  const utterance = new SpeechSynthesisUtterance(text);
-  utterance.lang = selectedLang;
-  utterance.rate = 0.95;
-  utterance.pitch = 1.1;
-  const btn = document.getElementById('speak-btn');
-  if (btn) { btn.textContent = '🔊 Speaking...'; btn.disabled = true; }
-  utterance.onend = () => {
-    if (btn) { btn.innerHTML = `<svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="white" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19.114 5.636a9 9 0 010 12.728M16.463 8.288a5.25 5.25 0 010 7.424M6.75 8.25l4.72-4.72a.75.75 0 011.28.53v15.88a.75.75 0 01-1.28.53l-4.72-4.72H4.51c-.88 0-1.704-.507-1.938-1.354A9.01 9.01 0 012.25 12c0-.83.112-1.633.322-2.396C2.806 8.756 3.63 8.25 4.51 8.25H6.75z"/></svg> Speak Aloud`; btn.disabled = false; }
-  };
-  utterance.onerror = () => {
-    if (btn) { btn.textContent = 'Speak Aloud'; btn.disabled = false; }
-    toast('Speech failed. Try a different browser.', 'error');
-  };
-  window.speechSynthesis.speak(utterance);
-}
-
-// ============================================
-// PROFILE PAGE
-// ============================================
+// ==================== PROFILE ====================
 function renderProfile(c) {
   c.innerHTML = `
     <div class="profile-page">
       <div class="profile-hero">
-        <div class="avatar">✦</div>
-        <div class="profile-name">Creative Studio</div>
-        <div class="profile-bio">AI Artist · Free tier · Unlimited creations</div>
-        <div class="profile-stats">
-          <div class="stat"><div class="stat-num">${gallery.length}</div><div class="stat-label">Created</div></div>
-          <div class="stat"><div class="stat-num">∞</div><div class="stat-label">Remaining</div></div>
-          <div class="stat"><div class="stat-num">Free</div><div class="stat-label">Plan</div></div>
+        <div class="profile-avatar">🎨</div>
+        <div class="profile-name">Creative Artist</div>
+        <div class="profile-sub">LuminaAI Studio Member</div>
+        <div class="badge-free" style="display:inline-block">✦ FREE FOREVER</div>
+      </div>
+
+      <div class="profile-stats">
+        <div class="stat-card">
+          <div class="stat-num">${gallery.length}</div>
+          <div class="stat-label">Created</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-num">∞</div>
+          <div class="stat-label">Remaining</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-num">Free</div>
+          <div class="stat-label">Plan</div>
         </div>
       </div>
 
-      <div class="profile-section">
-        <div class="profile-section-title">🚀 Features</div>
-        <div class="setting-row" onclick="setPage('create')">
-          <div class="setting-row-left"><div class="setting-icon" style="background:rgba(124,58,237,0.15);">✨</div><div class="setting-label">AI Image Generator</div></div>
-          <span class="badge free">FREE</span>
-        </div>
-        <div class="setting-row" onclick="setPage('effects')">
-          <div class="setting-row-left"><div class="setting-icon" style="background:rgba(236,72,153,0.15);">🎨</div><div class="setting-label">Photo Effects</div></div>
-          <span class="badge free">FREE</span>
-        </div>
-        <div class="setting-row" onclick="setPage('voice')">
-          <div class="setting-row-left"><div class="setting-icon" style="background:rgba(6,182,212,0.15);">🎙</div><div class="setting-label">Voice AI</div></div>
-          <span class="badge free">FREE</span>
-        </div>
-        <div class="setting-row" onclick="setPage('explore')">
-          <div class="setting-row-left"><div class="setting-icon" style="background:rgba(16,185,129,0.15);">🔍</div><div class="setting-label">Explore AI Art</div></div>
-          <span class="badge free">FREE</span>
-        </div>
+      <div style="font-size:12px;font-weight:700;color:var(--muted);margin-bottom:10px;text-transform:uppercase;letter-spacing:1px;">Features</div>
+      <div class="settings-list">
+        ${[
+          {ico:'✨',bg:'rgba(124,58,237,0.15)',label:'AI Image Generator',sub:'Unlimited free generations',page:'create'},
+          {ico:'🎨',bg:'rgba(236,72,153,0.15)',label:'Photo Effects',sub:'12+ instant filters',page:'effects'},
+          {ico:'🗣',bg:'rgba(6,182,212,0.15)',label:'Voice AI',sub:'8 languages, text to speech',page:'voice'},
+          {ico:'🔭',bg:'rgba(16,185,129,0.15)',label:'Explore',sub:'Browse real AI art',page:'explore'},
+        ].map(s=>`
+          <div class="setting-row" onclick="setPage('${s.page}')">
+            <div class="setting-row-left">
+              <div class="setting-ico" style="background:${s.bg}">${s.ico}</div>
+              <div>
+                <div class="setting-label">${s.label}</div>
+                <div class="setting-sub">${s.sub}</div>
+              </div>
+            </div>
+            <span class="setting-arrow">›</span>
+          </div>
+        `).join('')}
       </div>
 
-      <div class="profile-section">
-        <div class="profile-section-title">ℹ About</div>
-        <div class="setting-row">
-          <div class="setting-row-left"><div class="setting-icon" style="background:rgba(255,255,255,0.05);">🤖</div><div class="setting-label">Powered by</div></div>
-          <span class="setting-right">Pollinations.ai</span>
-        </div>
-        <div class="setting-row">
-          <div class="setting-row-left"><div class="setting-icon" style="background:rgba(255,255,255,0.05);">💰</div><div class="setting-label">Cost</div></div>
-          <span class="setting-right" style="color:#10b981;font-weight:600;">100% Free</span>
-        </div>
-        <div class="setting-row">
-          <div class="setting-row-left"><div class="setting-icon" style="background:rgba(255,255,255,0.05);">🔑</div><div class="setting-label">API Key Required</div></div>
-          <span class="setting-right" style="color:#10b981;">No</span>
-        </div>
-        <div class="setting-row">
-          <div class="setting-row-left"><div class="setting-icon" style="background:rgba(255,255,255,0.05);">📱</div><div class="setting-label">App Version</div></div>
-          <span class="setting-right">1.0.0</span>
-        </div>
+      <div style="margin-top:20px;padding:16px;background:linear-gradient(135deg,rgba(124,58,237,0.1),rgba(6,182,212,0.1));border:1px solid rgba(124,58,237,0.2);border-radius:var(--radius);text-align:center;">
+        <div style="font-size:20px;margin-bottom:6px">🚀</div>
+        <div style="font-size:14px;font-weight:700;margin-bottom:4px">Powered by Pollinations.ai</div>
+        <div style="font-size:12px;color:var(--muted)">Real AI image generation, completely free with no limits</div>
       </div>
-
-      <div style="text-align:center;padding:20px 0 40px;">
-        <div style="font-size:28px;margin-bottom:8px;">✦</div>
-        <div style="font-size:22px;font-weight:800;background:linear-gradient(135deg,#a855f7,#06b6d4);-webkit-background-clip:text;-webkit-text-fill-color:transparent;">LuminaAI</div>
-        <div style="color:#6b7280;font-size:13px;margin-top:4px;">AI Art Studio — Free Forever</div>
-      </div>
-    </div>`;
+    </div>
+  `;
 }
 
-// ============================================
-// LIGHTBOX
-// ============================================
-function openLightbox(url) {
-  const lb = document.createElement('div');
-  lb.className = 'lightbox';
-  lb.innerHTML = `
-    <button class="lightbox-close" onclick="this.parentElement.remove()">✕</button>
-    <img src="${url}" alt="AI Image">
-    <div class="lightbox-actions">
-      <button class="lb-btn primary" onclick="downloadImage('${url}')">⬇ Save Image</button>
-      <button class="lb-btn secondary" onclick="useForEffects('${url}');this.closest('.lightbox').remove()">✨ Effects</button>
-    </div>`;
-  lb.addEventListener('click', (e) => { if (e.target === lb) lb.remove(); });
-  document.body.appendChild(lb);
-}
+// ==================== ROUTING ====================
+// Override setPage to handle effects and voice
+const _setPage = setPage;
+window.setPage = function(page) {
+  currentPage = page;
+  ['home','explore','create','gallery','profile'].forEach(p => {
+    const el = document.getElementById(`nav-${p}`);
+    if (el) el.classList.toggle('active', p === page);
+  });
+  const c = document.getElementById('page-container');
+  if (page === 'effects') { renderEffects(c); }
+  else if (page === 'voice') { renderVoice(c); }
+  else { renderPage(); }
+  document.getElementById('page-container').scrollTop = 0;
+};
 
-// ============================================
 // INIT
-// ============================================
 setPage('home');
 </script>
 </body>
