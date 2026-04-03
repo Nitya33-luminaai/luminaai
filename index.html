@@ -2,973 +2,939 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>LuminaAI — AI Art Studio</title>
-<meta name="theme-color" content="#0d0d1a">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>LuminaAI – Free AI Studio</title>
+<meta name="theme-color" content="#0f0f13">
 <style>
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 :root {
-  --bg: #0a0a14;
-  --bg2: #0f0f1c;
-  --bg3: #161625;
-  --card: #13132060;
-  --border: #ffffff12;
+  --bg1: #0f0f13;
+  --bg2: #16161e;
+  --bg3: #1e1e2a;
+  --bg4: #252535;
   --accent: #7c3aed;
-  --accent2: #a855f7;
-  --cyan: #06b6d4;
-  --pink: #ec4899;
+  --accent2: #a78bfa;
+  --accent3: #c4b5fd;
   --green: #10b981;
-  --text: #f1f0ff;
-  --muted: #6b7280;
-  --radius: 18px;
-  --radius-sm: 12px;
+  --red: #ef4444;
+  --yellow: #f59e0b;
+  --text: #f1f1f5;
+  --muted: #9090a8;
+  --border: #2a2a3a;
+  --radius: 16px;
+  --shadow: 0 4px 24px rgba(0,0,0,0.4);
 }
-html, body { height: 100%; background: var(--bg); color: var(--text); font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; overscroll-behavior: none; overflow: hidden; }
-#app { height: 100dvh; display: flex; flex-direction: column; }
-
-/* SHIMMER */
-@keyframes shimmer { 0%{background-position:-400px 0} 100%{background-position:400px 0} }
-.shimmer { background: linear-gradient(90deg, var(--bg3) 25%, #1e1e35 50%, var(--bg3) 75%); background-size: 800px 100%; animation: shimmer 1.5s infinite; }
-@keyframes spin { to { transform: rotate(360deg); } }
-@keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
-@keyframes pop { 0%{transform:scale(0.85);opacity:0} 70%{transform:scale(1.05)} 100%{transform:scale(1);opacity:1} }
-@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.5} }
-
-/* HEADER */
-.header { display:flex; align-items:center; justify-content:space-between; padding:16px 20px 12px; flex-shrink:0; }
-.logo { display:flex; align-items:center; gap:8px; }
-.logo-icon { width:32px; height:32px; background:linear-gradient(135deg,#7c3aed,#06b6d4); border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:18px; }
-.logo-text { font-size:22px; font-weight:900; background:linear-gradient(135deg,#a855f7,#06b6d4); -webkit-background-clip:text; -webkit-text-fill-color:transparent; letter-spacing:-0.5px; }
-.header-badges { display:flex; gap:8px; align-items:center; }
-.badge-free { background:linear-gradient(135deg,rgba(16,185,129,0.2),rgba(6,182,212,0.2)); border:1px solid rgba(16,185,129,0.4); color:#10b981; font-size:11px; font-weight:700; padding:5px 10px; border-radius:20px; letter-spacing:0.5px; }
-.badge-notif { width:36px; height:36px; background:var(--bg3); border:1px solid var(--border); border-radius:50%; display:flex; align-items:center; justify-content:center; cursor:pointer; font-size:16px; }
+* { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+html,body { height:100%; overflow:hidden; background:var(--bg1); color:var(--text); font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif; }
+#app { display:flex; flex-direction:column; height:100%; }
+#page { flex:1; overflow-y:auto; overflow-x:hidden; padding-bottom:80px; }
+#page::-webkit-scrollbar { display:none; }
 
 /* NAV */
-.nav { display:flex; align-items:center; justify-content:space-around; background:var(--bg2); border-top:1px solid var(--border); padding:8px 0 max(8px,env(safe-area-inset-bottom)); flex-shrink:0; backdrop-filter:blur(20px); }
-.nav-item { display:flex; flex-direction:column; align-items:center; gap:3px; cursor:pointer; padding:6px 14px; border-radius:14px; transition:all 0.2s; min-width:60px; }
-.nav-item .nav-ico { font-size:22px; transition:transform 0.2s; }
-.nav-item span { font-size:10px; color:var(--muted); font-weight:600; transition:color 0.2s; }
-.nav-item.active .nav-ico { transform:scale(1.1); }
-.nav-item.active span { color:var(--accent2); }
-.nav-item.active { background:rgba(168,85,247,0.1); }
-.nav-create { background:linear-gradient(135deg,var(--accent),var(--cyan)); border-radius:50%; width:54px; height:54px; display:flex; align-items:center; justify-content:center; cursor:pointer; box-shadow:0 4px 24px rgba(124,58,237,0.5); transition:all 0.2s; margin-top:-18px; border:3px solid var(--bg2); font-size:26px; }
-.nav-create:active { transform:scale(0.9); }
+#nav {
+  position:fixed; bottom:0; left:0; right:0; z-index:100;
+  background:var(--bg2); border-top:1px solid var(--border);
+  display:flex; padding:8px 0 env(safe-area-inset-bottom,8px);
+}
+.nav-btn {
+  flex:1; display:flex; flex-direction:column; align-items:center; gap:3px;
+  padding:6px 4px; border:none; background:none; color:var(--muted);
+  font-size:10px; font-weight:600; cursor:pointer; transition:all 0.2s;
+  text-transform:uppercase; letter-spacing:0.5px;
+}
+.nav-btn.active { color:var(--accent2); }
+.nav-btn svg { width:22px; height:22px; stroke-width:1.8; }
+.nav-btn.active svg { stroke:var(--accent2); }
 
-/* PAGES */
-.page { flex:1; overflow-y:auto; overflow-x:hidden; padding-bottom:16px; -webkit-overflow-scrolling:touch; }
-.page::-webkit-scrollbar { display:none; }
+/* HEADER */
+.page-header {
+  padding:16px 16px 8px;
+  display:flex; align-items:center; justify-content:space-between;
+}
+.logo { font-size:22px; font-weight:900; background:linear-gradient(135deg,#a78bfa,#818cf8); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
 
-/* ===== HOME ===== */
-.home-tabs { display:flex; gap:8px; padding:4px 16px 16px; overflow-x:auto; scrollbar-width:none; }
-.home-tabs::-webkit-scrollbar { display:none; }
-.home-tab { flex-shrink:0; padding:8px 16px; border-radius:50px; font-size:13px; font-weight:600; cursor:pointer; transition:all 0.2s; border:1px solid var(--border); color:var(--muted); background:var(--bg3); }
-.home-tab.active { background:linear-gradient(135deg,var(--accent),var(--accent2)); color:white; border-color:transparent; }
+/* CARDS */
+.card { background:var(--bg3); border-radius:var(--radius); border:1px solid var(--border); overflow:hidden; }
 
-.hero-banner { margin:12px 16px; padding:22px 20px; border-radius:22px; background:linear-gradient(135deg,#1a0a3a 0%,#0a1a3a 100%); border:1px solid rgba(124,58,237,0.25); position:relative; overflow:hidden; }
-.hero-banner::after { content:''; position:absolute; top:-40px; right:-40px; width:160px; height:160px; background:radial-gradient(circle,rgba(168,85,247,0.3) 0%,transparent 70%); pointer-events:none; }
-.hero-tag { font-size:10px; font-weight:800; text-transform:uppercase; letter-spacing:2px; color:var(--accent2); margin-bottom:8px; }
-.hero-title { font-size:24px; font-weight:900; line-height:1.2; margin-bottom:6px; }
-.hero-title em { font-style:normal; background:linear-gradient(135deg,#a855f7,#06b6d4); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
-.hero-sub { font-size:13px; color:#9ca3af; margin-bottom:16px; line-height:1.5; }
-.hero-actions { display:flex; gap:10px; }
-.btn-primary { display:inline-flex; align-items:center; gap:6px; background:linear-gradient(135deg,var(--accent),var(--cyan)); color:white; border:none; padding:11px 20px; border-radius:50px; font-size:14px; font-weight:700; cursor:pointer; transition:all 0.2s; }
-.btn-primary:active { transform:scale(0.95); opacity:0.9; }
-.btn-outline { display:inline-flex; align-items:center; gap:6px; background:rgba(255,255,255,0.05); color:var(--text); border:1px solid var(--border); padding:11px 16px; border-radius:50px; font-size:14px; font-weight:600; cursor:pointer; }
+/* FEED */
+.feed-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; padding:12px 12px 0; }
+.feed-card { background:var(--bg3); border-radius:14px; overflow:hidden; border:1px solid var(--border); cursor:pointer; }
+.feed-img-wrap { position:relative; aspect-ratio:3/4; overflow:hidden; background:var(--bg4); }
+.feed-img-wrap img { width:100%; height:100%; object-fit:cover; display:block; transition:opacity 0.3s; }
+.feed-img-wrap img.loading { opacity:0; }
+.feed-img-wrap .shimmer {
+  position:absolute; inset:0;
+  background:linear-gradient(90deg, var(--bg4) 0%, var(--bg3) 40%, var(--bg4) 80%);
+  background-size:200% 100%; animation:shimmer 1.5s infinite;
+}
+.feed-img-wrap .shimmer.hidden { display:none; }
+@keyframes shimmer { 0%{background-position:200% 0} 100%{background-position:-200% 0} }
+.feed-label { padding:8px 10px; font-size:11px; font-weight:700; color:var(--text); }
+.feed-tag { font-size:10px; color:var(--muted); margin-top:1px; }
 
-.section-hdr { display:flex; align-items:center; justify-content:space-between; padding:0 16px; margin-bottom:12px; }
-.section-hdr h2 { font-size:17px; font-weight:800; display:flex; align-items:center; gap:6px; }
-.section-hdr a { font-size:12px; color:var(--accent2); font-weight:600; cursor:pointer; }
+/* SECTION TITLE */
+.section-title { font-size:13px; font-weight:800; color:var(--muted); text-transform:uppercase; letter-spacing:1px; padding:16px 16px 8px; }
 
-/* FEED GRID - fixed images */
-.feed-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; padding:0 16px; }
-.feed-card { border-radius:var(--radius); overflow:hidden; background:var(--bg3); border:1px solid var(--border); cursor:pointer; aspect-ratio:3/4; position:relative; transition:transform 0.15s; }
-.feed-card:active { transform:scale(0.97); }
-.feed-card img { width:100%; height:100%; object-fit:cover; display:block; }
-.feed-card-label { position:absolute; bottom:0; left:0; right:0; padding:20px 10px 10px; background:linear-gradient(transparent,rgba(0,0,0,0.85)); }
-.feed-card-label .tag { display:inline-block; background:rgba(124,58,237,0.8); color:white; font-size:9px; font-weight:800; padding:2px 7px; border-radius:5px; margin-bottom:4px; text-transform:uppercase; letter-spacing:0.5px; }
-.feed-card-label p { font-size:11px; color:#e5e7eb; font-weight:600; line-height:1.3; }
-.feed-card-shimmer { width:100%; height:100%; }
-
-/* ===== CREATE ===== */
+/* CREATE PAGE */
 .create-page { padding:16px; }
-.create-hero { text-align:center; padding:20px 0 24px; }
-.create-hero h2 { font-size:22px; font-weight:900; margin-bottom:6px; }
-.create-hero p { font-size:13px; color:var(--muted); }
+.create-title { font-size:24px; font-weight:900; margin-bottom:4px; }
+.create-sub { font-size:13px; color:var(--muted); margin-bottom:20px; }
 
-.style-scroll { display:flex; gap:8px; overflow-x:auto; scrollbar-width:none; padding-bottom:4px; margin-bottom:20px; }
-.style-scroll::-webkit-scrollbar { display:none; }
-.style-chip { flex-shrink:0; padding:8px 14px; border-radius:50px; font-size:12px; font-weight:700; cursor:pointer; border:1px solid var(--border); background:var(--bg3); color:var(--muted); transition:all 0.2s; }
-.style-chip.active { background:rgba(124,58,237,0.25); border-color:var(--accent2); color:var(--accent2); }
+/* Mode Tabs */
+.mode-tabs { display:flex; background:var(--bg3); border-radius:12px; padding:4px; margin-bottom:20px; border:1px solid var(--border); }
+.mode-tab { flex:1; padding:8px; text-align:center; font-size:12px; font-weight:700; color:var(--muted); cursor:pointer; border-radius:9px; transition:all 0.2s; }
+.mode-tab.active { background:var(--accent); color:#fff; }
 
-.prompt-box { background:var(--bg3); border:1px solid var(--border); border-radius:var(--radius); padding:14px; margin-bottom:12px; transition:border-color 0.2s; }
-.prompt-box:focus-within { border-color:var(--accent2); }
-.prompt-box textarea { width:100%; background:transparent; border:none; outline:none; color:var(--text); font-size:15px; line-height:1.6; resize:none; min-height:80px; font-family:inherit; }
-.prompt-box textarea::placeholder { color:var(--muted); }
-.prompt-actions { display:flex; gap:8px; align-items:center; justify-content:space-between; margin-top:10px; }
-.prompt-actions-left { display:flex; gap:8px; }
-.small-btn { padding:7px 13px; border-radius:50px; font-size:12px; font-weight:600; cursor:pointer; border:1px solid var(--border); background:var(--bg2); color:var(--muted); display:flex; align-items:center; gap:4px; transition:all 0.2s; }
-.small-btn:active { transform:scale(0.95); }
-.small-btn.accent { border-color:rgba(168,85,247,0.4); color:var(--accent2); background:rgba(168,85,247,0.1); }
+/* Textarea */
+.prompt-wrap { position:relative; margin-bottom:12px; }
+.prompt-input {
+  width:100%; min-height:100px; padding:14px 44px 14px 14px;
+  background:var(--bg3); border:1.5px solid var(--border); border-radius:14px;
+  color:var(--text); font-size:14px; line-height:1.5; resize:none;
+  outline:none; transition:border-color 0.2s;
+}
+.prompt-input:focus { border-color:var(--accent2); }
+.prompt-input::placeholder { color:var(--muted); }
+.clear-btn { position:absolute; top:10px; right:10px; background:none; border:none; color:var(--muted); cursor:pointer; font-size:18px; padding:4px; }
 
-/* Image upload in create */
-.img-upload-area { border:2px dashed var(--border); border-radius:var(--radius); padding:20px; text-align:center; cursor:pointer; transition:all 0.2s; margin-bottom:12px; background:var(--bg3); }
-.img-upload-area:active, .img-upload-area.dragover { border-color:var(--accent2); background:rgba(124,58,237,0.08); }
-.img-upload-area .upload-ico { font-size:36px; margin-bottom:8px; }
-.img-upload-area p { font-size:13px; color:var(--muted); }
-.img-upload-area .upload-hint { font-size:11px; color:var(--muted); margin-top:4px; opacity:0.7; }
-.img-preview-wrap { position:relative; margin-bottom:12px; border-radius:var(--radius); overflow:hidden; }
-.img-preview-wrap img { width:100%; max-height:240px; object-fit:cover; border-radius:var(--radius); display:block; }
-.img-preview-wrap .remove-img { position:absolute; top:8px; right:8px; background:rgba(0,0,0,0.7); color:white; border:none; width:30px; height:30px; border-radius:50%; font-size:14px; cursor:pointer; display:flex; align-items:center; justify-content:center; }
+/* Style Chips */
+.style-chips { display:flex; gap:8px; overflow-x:auto; padding-bottom:4px; margin-bottom:16px; scrollbar-width:none; }
+.style-chips::-webkit-scrollbar { display:none; }
+.style-chip {
+  flex-shrink:0; padding:6px 14px; border-radius:50px;
+  background:var(--bg3); border:1.5px solid var(--border);
+  font-size:12px; font-weight:600; color:var(--muted); cursor:pointer;
+  transition:all 0.2s; white-space:nowrap;
+}
+.style-chip.active { background:rgba(124,58,237,0.2); border-color:var(--accent2); color:var(--accent2); }
 
-.size-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:8px; margin-bottom:16px; }
-.size-btn { padding:10px 6px; border-radius:12px; border:1px solid var(--border); background:var(--bg3); cursor:pointer; text-align:center; transition:all 0.2s; }
-.size-btn.active { border-color:var(--accent2); background:rgba(124,58,237,0.15); }
-.size-btn .ratio { font-size:18px; margin-bottom:2px; }
-.size-btn .label { font-size:10px; color:var(--muted); font-weight:600; }
-.size-btn.active .label { color:var(--accent2); }
+/* Size Picker */
+.size-row { display:flex; gap:8px; margin-bottom:16px; }
+.size-opt {
+  flex:1; padding:10px 6px; background:var(--bg3); border:1.5px solid var(--border);
+  border-radius:12px; cursor:pointer; text-align:center; transition:all 0.2s;
+}
+.size-opt.active { border-color:var(--accent2); background:rgba(124,58,237,0.1); }
+.size-ico { font-size:18px; margin-bottom:2px; }
+.size-lbl { font-size:10px; font-weight:700; color:var(--muted); }
 
-.gen-btn { width:100%; padding:16px; border-radius:50px; background:linear-gradient(135deg,var(--accent),var(--cyan)); color:white; font-size:16px; font-weight:800; border:none; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:8px; transition:all 0.2s; letter-spacing:0.3px; box-shadow:0 4px 24px rgba(124,58,237,0.4); }
-.gen-btn:active { transform:scale(0.97); }
+/* Image Upload */
+.img-upload {
+  border:2px dashed var(--border); border-radius:14px;
+  padding:24px; text-align:center; cursor:pointer;
+  background:var(--bg3); margin-bottom:16px; transition:all 0.2s;
+}
+.img-upload:active { border-color:var(--accent2); background:rgba(124,58,237,0.05); }
+.img-upload h4 { font-size:14px; margin:8px 0 4px; }
+.img-upload p { font-size:12px; color:var(--muted); }
+.img-preview-wrap { position:relative; margin-bottom:16px; }
+.img-preview-wrap img { width:100%; border-radius:14px; border:2px solid var(--accent2); display:block; max-height:200px; object-fit:cover; }
+.remove-img { position:absolute; top:8px; right:8px; background:rgba(0,0,0,0.7); border:none; border-radius:50%; width:28px; height:28px; color:#fff; font-size:16px; cursor:pointer; display:flex; align-items:center; justify-content:center; }
+
+/* Generate Button */
+.gen-btn {
+  width:100%; padding:16px; background:linear-gradient(135deg,#7c3aed,#5b21b6);
+  border:none; border-radius:14px; color:#fff; font-size:16px; font-weight:800;
+  cursor:pointer; transition:all 0.2s; box-shadow:0 4px 20px rgba(124,58,237,0.4);
+  display:flex; align-items:center; justify-content:center; gap:8px;
+}
 .gen-btn:disabled { opacity:0.6; cursor:not-allowed; }
+.gen-btn:not(:disabled):active { transform:scale(0.97); }
 
-/* RESULT */
-.result-wrap { margin-top:20px; animation:pop 0.4s ease; }
-.result-img-wrap { border-radius:var(--radius); overflow:hidden; position:relative; margin-bottom:12px; }
-.result-img-wrap img { width:100%; display:block; border-radius:var(--radius); }
-.result-img-wrap .result-badge { position:absolute; top:10px; left:10px; background:rgba(16,185,129,0.9); color:white; font-size:10px; font-weight:800; padding:4px 10px; border-radius:20px; letter-spacing:0.5px; }
-.result-actions { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
-.result-act-btn { padding:12px; border-radius:14px; border:none; cursor:pointer; font-size:13px; font-weight:700; display:flex; align-items:center; justify-content:center; gap:6px; transition:all 0.2s; }
-.result-act-btn:active { transform:scale(0.96); }
-.result-act-btn.save { background:linear-gradient(135deg,var(--accent),var(--accent2)); color:white; }
-.result-act-btn.download { background:var(--bg3); border:1px solid var(--border); color:var(--text); }
-.result-act-btn.share { background:rgba(6,182,212,0.15); border:1px solid rgba(6,182,212,0.3); color:var(--cyan); }
-.result-act-btn.remix { background:rgba(236,72,153,0.15); border:1px solid rgba(236,72,153,0.3); color:var(--pink); }
+/* Result */
+.result-area { margin-top:20px; }
+.result-card { background:var(--bg3); border-radius:var(--radius); overflow:hidden; border:1px solid var(--border); }
+.result-img-container { position:relative; background:var(--bg4); min-height:300px; display:flex; align-items:center; justify-content:center; }
+.result-img-container img { width:100%; display:block; max-height:500px; object-fit:contain; }
+.result-img-container .img-loader {
+  position:absolute; inset:0; display:flex; flex-direction:column;
+  align-items:center; justify-content:center; gap:12px; background:var(--bg4);
+}
+.result-img-container .img-loader.hidden { display:none; }
+.spinner { width:40px; height:40px; border:3px solid var(--border); border-top-color:var(--accent2); border-radius:50%; animation:spin 0.8s linear infinite; }
+@keyframes spin { to{transform:rotate(360deg)} }
+.loader-text { font-size:14px; font-weight:600; color:var(--accent2); text-align:center; padding:0 20px; }
+.loader-sub { font-size:12px; color:var(--muted); text-align:center; padding:0 20px; }
+.result-actions { display:grid; grid-template-columns:1fr 1fr; gap:8px; padding:12px; }
+.act-btn { padding:10px; background:var(--bg4); border:1px solid var(--border); border-radius:12px; color:var(--text); font-size:12px; font-weight:700; cursor:pointer; text-align:center; transition:all 0.2s; }
+.act-btn:active { transform:scale(0.95); }
+.act-btn.primary { background:rgba(124,58,237,0.2); border-color:var(--accent2); color:var(--accent2); }
+.prompt-used { padding:12px; background:var(--bg4); border-top:1px solid var(--border); font-size:12px; color:var(--muted); line-height:1.5; }
+.fail-state { text-align:center; padding:30px 20px; }
+.fail-state .fail-ico { font-size:40px; margin-bottom:12px; }
+.fail-state h3 { font-size:16px; font-weight:700; margin-bottom:6px; }
+.fail-state p { font-size:13px; color:var(--muted); margin-bottom:16px; }
 
-.generating-state { text-align:center; padding:40px 20px; }
-.gen-spinner { width:56px; height:56px; border:4px solid var(--border); border-top-color:var(--accent2); border-radius:50%; animation:spin 0.8s linear infinite; margin:0 auto 16px; }
-.gen-status { font-size:15px; font-weight:600; color:var(--text); margin-bottom:6px; }
-.gen-sub { font-size:12px; color:var(--muted); }
-.gen-progress { width:100%; height:3px; background:var(--bg3); border-radius:2px; margin-top:16px; overflow:hidden; }
-.gen-progress-bar { height:100%; background:linear-gradient(90deg,var(--accent),var(--cyan)); border-radius:2px; transition:width 0.3s; animation:pulse 2s infinite; }
-
-/* ===== EFFECTS ===== */
+/* EFFECTS */
 .effects-page { padding:16px; }
-.effects-upload { border:2px dashed var(--border); border-radius:var(--radius); padding:28px 20px; text-align:center; cursor:pointer; transition:all 0.2s; background:var(--bg3); margin-bottom:16px; }
-.effects-upload:active { border-color:var(--accent2); background:rgba(124,58,237,0.08); }
-.effects-upload .up-ico { font-size:44px; margin-bottom:10px; }
-.effects-upload h3 { font-size:16px; font-weight:700; margin-bottom:4px; }
+.effects-upload {
+  border:2px dashed var(--border); border-radius:var(--radius);
+  padding:40px 20px; text-align:center; cursor:pointer;
+  background:var(--bg3); margin-bottom:20px; transition:all 0.2s;
+}
+.effects-upload:active { border-color:var(--accent2); }
+.eff-ico { font-size:48px; margin-bottom:12px; }
+.effects-upload h3 { font-size:16px; font-weight:700; margin-bottom:6px; }
 .effects-upload p { font-size:13px; color:var(--muted); }
+.canvas-wrap { position:relative; margin-bottom:16px; }
+.canvas-wrap canvas { width:100%; border-radius:var(--radius); border:2px solid var(--border); display:block; }
+.change-photo { position:absolute; bottom:10px; right:10px; background:rgba(0,0,0,0.7); border:1px solid var(--border); border-radius:10px; padding:6px 12px; color:#fff; font-size:12px; font-weight:700; cursor:pointer; }
+.fx-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:8px; margin-bottom:16px; }
+.fx-btn {
+  padding:10px 6px; background:var(--bg3); border:1.5px solid var(--border);
+  border-radius:12px; cursor:pointer; text-align:center; transition:all 0.2s;
+}
+.fx-btn.active { border-color:var(--accent2); background:rgba(124,58,237,0.15); }
+.fx-btn.active .fx-name { color:var(--accent2); }
+.fx-ico { font-size:20px; margin-bottom:3px; }
+.fx-name { font-size:10px; font-weight:700; color:var(--muted); }
+.save-fx-btn { width:100%; padding:14px; background:linear-gradient(135deg,#7c3aed,#5b21b6); border:none; border-radius:14px; color:#fff; font-size:14px; font-weight:800; cursor:pointer; }
 
-.effects-preview { position:relative; margin-bottom:16px; border-radius:var(--radius); overflow:hidden; }
-.effects-preview .original-img { width:100%; max-height:260px; object-fit:cover; display:block; }
-.effects-preview .change-img { position:absolute; top:8px; right:8px; background:rgba(0,0,0,0.7); color:white; border:none; padding:6px 12px; border-radius:20px; font-size:12px; font-weight:600; cursor:pointer; }
+/* VOICE */
+.voice-page { padding:16px; }
+.voice-input-wrap { margin-bottom:16px; }
+.voice-textarea { width:100%; min-height:120px; padding:14px; background:var(--bg3); border:1.5px solid var(--border); border-radius:14px; color:var(--text); font-size:14px; line-height:1.6; resize:none; outline:none; }
+.voice-textarea:focus { border-color:var(--accent2); }
+.voice-controls { background:var(--bg3); border:1px solid var(--border); border-radius:var(--radius); padding:16px; margin-bottom:16px; }
+.ctrl-row { display:flex; align-items:center; justify-content:space-between; margin-bottom:12px; }
+.ctrl-row:last-child { margin-bottom:0; }
+.ctrl-label { font-size:13px; font-weight:600; color:var(--muted); }
+.ctrl-val { font-size:13px; font-weight:700; color:var(--accent2); min-width:40px; text-align:right; }
+.voice-slider { width:100%; accent-color:var(--accent2); cursor:pointer; }
+.lang-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:8px; margin-bottom:16px; }
+.lang-btn { padding:10px; background:var(--bg3); border:1.5px solid var(--border); border-radius:12px; cursor:pointer; text-align:center; font-size:12px; font-weight:600; color:var(--muted); transition:all 0.2s; }
+.lang-btn.active { border-color:var(--accent2); color:var(--accent2); background:rgba(124,58,237,0.1); }
+.speak-btn { width:100%; padding:16px; background:linear-gradient(135deg,#059669,#047857); border:none; border-radius:14px; color:#fff; font-size:16px; font-weight:800; cursor:pointer; box-shadow:0 4px 20px rgba(5,150,105,0.4); display:flex; align-items:center; justify-content:center; gap:8px; }
+.speak-btn.speaking { background:linear-gradient(135deg,#ef4444,#dc2626); box-shadow:0 4px 20px rgba(239,68,68,0.4); }
 
-.effects-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:8px; margin-bottom:16px; }
-.effect-tile { border-radius:12px; overflow:hidden; aspect-ratio:1; position:relative; cursor:pointer; border:2px solid transparent; transition:all 0.2s; background:var(--bg3); }
-.effect-tile.selected { border-color:var(--accent2); }
-.effect-tile:active { transform:scale(0.95); }
-.effect-tile .ef-preview { width:100%; height:100%; object-fit:cover; display:block; }
-.effect-tile .ef-overlay { position:absolute; inset:0; background:rgba(0,0,0,0.4); display:flex; flex-direction:column; align-items:center; justify-content:center; gap:2px; }
-.effect-tile .ef-ico { font-size:22px; }
-.effect-tile .ef-name { font-size:9px; font-weight:700; color:white; text-align:center; }
-.effect-tile.selected .ef-overlay { background:rgba(124,58,237,0.4); }
-.apply-btn { width:100%; padding:14px; border-radius:50px; background:linear-gradient(135deg,#ec4899,#a855f7); color:white; font-size:15px; font-weight:800; border:none; cursor:pointer; transition:all 0.2s; }
-.apply-btn:active { transform:scale(0.97); }
-.apply-btn:disabled { opacity:0.5; cursor:not-allowed; }
+/* EXPLORE */
+.explore-page { padding:12px; }
+.search-wrap { position:relative; margin-bottom:16px; }
+.search-input { width:100%; padding:12px 16px 12px 42px; background:var(--bg3); border:1.5px solid var(--border); border-radius:50px; color:var(--text); font-size:14px; outline:none; }
+.search-input:focus { border-color:var(--accent2); }
+.search-ico { position:absolute; left:14px; top:50%; transform:translateY(-50%); color:var(--muted); font-size:16px; }
+.cat-chips { display:flex; gap:8px; overflow-x:auto; padding-bottom:4px; margin-bottom:16px; scrollbar-width:none; }
+.cat-chips::-webkit-scrollbar { display:none; }
+.cat-chip {
+  flex-shrink:0; padding:7px 14px; border-radius:50px;
+  background:var(--bg3); border:1.5px solid var(--border);
+  font-size:12px; font-weight:600; color:var(--muted); cursor:pointer;
+  transition:all 0.2s; white-space:nowrap;
+}
+.cat-chip.active { background:rgba(124,58,237,0.2); border-color:var(--accent2); color:var(--accent2); }
+.explore-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+.explore-card { background:var(--bg3); border-radius:14px; overflow:hidden; border:1px solid var(--border); }
+.explore-img { position:relative; aspect-ratio:1/1; background:var(--bg4); overflow:hidden; }
+.explore-img img { width:100%; height:100%; object-fit:cover; display:block; opacity:0; transition:opacity 0.5s; }
+.explore-img img.loaded { opacity:1; }
+.explore-img .shimmer { position:absolute; inset:0; background:linear-gradient(90deg,var(--bg4) 0%,var(--bg3) 40%,var(--bg4) 80%); background-size:200% 100%; animation:shimmer 1.5s infinite; }
+.explore-info { padding:8px 10px; }
+.explore-title { font-size:11px; font-weight:700; margin-bottom:2px; }
+.explore-style { font-size:10px; color:var(--muted); }
 
-/* ===== EXPLORE ===== */
-.explore-page { padding:16px; }
-.explore-search { display:flex; gap:10px; margin-bottom:16px; }
-.search-input-wrap { flex:1; display:flex; align-items:center; gap:10px; background:var(--bg3); border:1px solid var(--border); border-radius:50px; padding:0 16px; }
-.search-input-wrap input { flex:1; background:transparent; border:none; outline:none; color:var(--text); font-size:14px; height:44px; }
-.search-input-wrap input::placeholder { color:var(--muted); }
-.search-btn { padding:0 20px; height:44px; border-radius:50px; background:linear-gradient(135deg,var(--accent),var(--cyan)); color:white; border:none; font-size:14px; font-weight:700; cursor:pointer; }
-
-.category-tabs { display:flex; gap:8px; overflow-x:auto; scrollbar-width:none; margin-bottom:16px; }
-.category-tabs::-webkit-scrollbar { display:none; }
-.cat-tab { flex-shrink:0; padding:8px 16px; border-radius:50px; font-size:12px; font-weight:700; cursor:pointer; border:1px solid var(--border); background:var(--bg3); color:var(--muted); transition:all 0.2s; display:flex; align-items:center; gap:5px; }
-.cat-tab.active { background:linear-gradient(135deg,var(--accent),var(--accent2)); color:white; border-color:transparent; }
-
-.explore-grid { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
-.explore-card { border-radius:14px; overflow:hidden; aspect-ratio:1; position:relative; cursor:pointer; background:var(--bg3); transition:transform 0.15s; }
-.explore-card:active { transform:scale(0.96); }
-.explore-card img { width:100%; height:100%; object-fit:cover; display:block; }
-.explore-card .exp-overlay { position:absolute; bottom:0; left:0; right:0; padding:16px 8px 8px; background:linear-gradient(transparent,rgba(0,0,0,0.8)); }
-.explore-card .exp-label { font-size:11px; font-weight:700; color:white; }
-
-/* ===== GALLERY ===== */
+/* GALLERY */
 .gallery-page { padding:16px; }
-.gallery-hdr { display:flex; align-items:center; justify-content:space-between; margin-bottom:16px; }
-.gallery-hdr h2 { font-size:20px; font-weight:900; }
-.clear-btn { padding:7px 14px; border-radius:50px; background:rgba(239,68,68,0.12); border:1px solid rgba(239,68,68,0.3); color:#f87171; font-size:12px; font-weight:600; cursor:pointer; }
-.gallery-grid { display:grid; grid-template-columns:1fr 1fr 1fr; gap:6px; }
-.gallery-item { border-radius:10px; overflow:hidden; aspect-ratio:1; position:relative; cursor:pointer; background:var(--bg3); }
-.gallery-item img { width:100%; height:100%; object-fit:cover; display:block; }
-.gallery-item .g-del { position:absolute; top:4px; right:4px; background:rgba(0,0,0,0.65); color:white; border:none; width:24px; height:24px; border-radius:50%; font-size:12px; cursor:pointer; display:flex; align-items:center; justify-content:center; }
-.gallery-item .g-label { position:absolute; bottom:0; left:0; right:0; padding:10px 5px 5px; background:linear-gradient(transparent,rgba(0,0,0,0.75)); font-size:9px; color:#e5e7eb; font-weight:600; }
 .gallery-empty { text-align:center; padding:60px 20px; }
-.gallery-empty .empty-ico { font-size:60px; margin-bottom:16px; }
-.gallery-empty h3 { font-size:18px; font-weight:700; margin-bottom:6px; }
+.gallery-empty .empty-ico { font-size:64px; margin-bottom:16px; }
+.gallery-empty h3 { font-size:18px; font-weight:700; margin-bottom:8px; }
 .gallery-empty p { font-size:13px; color:var(--muted); }
-
-/* ===== PROFILE ===== */
-.profile-page { padding:16px; }
-.profile-hero { text-align:center; padding:24px 0 20px; }
-.profile-avatar { width:80px; height:80px; border-radius:50%; margin:0 auto 12px; background:linear-gradient(135deg,var(--accent),var(--cyan)); display:flex; align-items:center; justify-content:center; font-size:36px; border:3px solid rgba(168,85,247,0.3); }
-.profile-name { font-size:20px; font-weight:800; margin-bottom:4px; }
-.profile-sub { font-size:13px; color:var(--muted); margin-bottom:16px; }
-.profile-stats { display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin-bottom:20px; }
-.stat-card { background:var(--bg3); border:1px solid var(--border); border-radius:var(--radius-sm); padding:14px; text-align:center; }
-.stat-num { font-size:24px; font-weight:900; background:linear-gradient(135deg,var(--accent2),var(--cyan)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
-.stat-label { font-size:11px; color:var(--muted); font-weight:600; margin-top:2px; }
-.settings-list { display:flex; flex-direction:column; gap:8px; }
-.setting-row { display:flex; align-items:center; justify-content:space-between; background:var(--bg3); border:1px solid var(--border); border-radius:14px; padding:14px 16px; cursor:pointer; }
-.setting-row-left { display:flex; align-items:center; gap:12px; }
-.setting-ico { width:36px; height:36px; border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:18px; }
-.setting-label { font-size:14px; font-weight:600; }
-.setting-sub { font-size:11px; color:var(--muted); margin-top:1px; }
-.setting-arrow { color:var(--muted); font-size:18px; }
+.gallery-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+.gallery-item { position:relative; background:var(--bg3); border-radius:14px; overflow:hidden; border:1px solid var(--border); }
+.gallery-item img { width:100%; aspect-ratio:1/1; object-fit:cover; display:block; cursor:pointer; }
+.gallery-item .del-btn { position:absolute; top:6px; right:6px; background:rgba(0,0,0,0.7); border:none; border-radius:8px; padding:4px 8px; color:#fff; font-size:11px; cursor:pointer; font-weight:700; }
+.gallery-item .g-label { padding:8px; font-size:10px; font-weight:700; color:var(--muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.gallery-stats { display:flex; gap:12px; margin-bottom:20px; }
+.g-stat { flex:1; background:var(--bg3); border:1px solid var(--border); border-radius:14px; padding:14px; text-align:center; }
+.g-stat-num { font-size:24px; font-weight:900; color:var(--accent2); }
+.g-stat-lbl { font-size:11px; color:var(--muted); font-weight:600; text-transform:uppercase; letter-spacing:0.5px; }
 
 /* LIGHTBOX */
-.lightbox { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.92); z-index:200; flex-direction:column; align-items:center; justify-content:center; padding:20px; }
-.lightbox.open { display:flex; animation:fadeIn 0.2s ease; }
-.lightbox img { max-width:100%; max-height:75vh; border-radius:16px; object-fit:contain; }
-.lb-actions { display:flex; gap:10px; margin-top:16px; }
-.lb-btn { padding:11px 22px; border-radius:50px; font-size:14px; font-weight:700; cursor:pointer; border:none; display:flex; align-items:center; gap:6px; transition:all 0.2s; }
-.lb-btn.primary { background:linear-gradient(135deg,var(--accent),var(--cyan)); color:white; }
-.lb-btn.secondary { background:var(--bg3); border:1px solid var(--border); color:var(--text); }
-.lb-close { position:absolute; top:16px; right:16px; background:rgba(255,255,255,0.1); border:none; color:white; width:40px; height:40px; border-radius:50%; font-size:20px; cursor:pointer; display:flex; align-items:center; justify-content:center; }
+#lightbox {
+  display:none; position:fixed; inset:0; z-index:999;
+  background:rgba(0,0,0,0.95); align-items:center; justify-content:center;
+  flex-direction:column;
+}
+#lightbox.open { display:flex; }
+#lightbox img { max-width:95vw; max-height:80vh; object-fit:contain; border-radius:12px; }
+#lightbox-close { position:absolute; top:16px; right:16px; background:rgba(255,255,255,0.15); border:none; border-radius:50%; width:36px; height:36px; color:#fff; font-size:20px; cursor:pointer; display:flex; align-items:center; justify-content:center; }
+#lightbox-actions { display:flex; gap:12px; margin-top:16px; }
+#lightbox-actions button { padding:10px 20px; background:rgba(255,255,255,0.1); border:1px solid rgba(255,255,255,0.2); border-radius:10px; color:#fff; font-size:13px; font-weight:700; cursor:pointer; }
 
 /* TOAST */
-.toast-wrap { position:fixed; bottom:90px; left:50%; transform:translateX(-50%); z-index:300; display:flex; flex-direction:column; gap:8px; pointer-events:none; width:calc(100% - 32px); max-width:340px; }
-.toast { padding:13px 18px; border-radius:50px; font-size:13px; font-weight:700; text-align:center; animation:pop 0.3s ease; pointer-events:auto; color:white; }
-.toast.success { background:linear-gradient(135deg,#059669,#10b981); }
-.toast.error { background:linear-gradient(135deg,#dc2626,#ef4444); }
-.toast.info { background:linear-gradient(135deg,var(--accent),var(--accent2)); }
-.toast.out { animation:fadeIn 0.2s ease reverse; }
+#toast-container { position:fixed; top:20px; left:50%; transform:translateX(-50%); z-index:9999; display:flex; flex-direction:column; gap:8px; pointer-events:none; }
+.toast { padding:10px 20px; border-radius:50px; font-size:13px; font-weight:700; opacity:0; transform:translateY(-20px); transition:all 0.3s; pointer-events:none; white-space:nowrap; }
+.toast.show { opacity:1; transform:translateY(0); }
+.toast.success { background:#059669; color:#fff; }
+.toast.error { background:#ef4444; color:#fff; }
+.toast.info { background:#3b82f6; color:#fff; }
 
-/* VOICE AI */
-.voice-page { padding:16px; }
-.voice-hero { text-align:center; padding:20px 0 24px; }
-.voice-hero h2 { font-size:22px; font-weight:900; margin-bottom:6px; }
-.voice-hero p { font-size:13px; color:var(--muted); }
-.voice-input-box { background:var(--bg3); border:1px solid var(--border); border-radius:var(--radius); padding:16px; margin-bottom:12px; }
-.voice-input-box textarea { width:100%; background:transparent; border:none; outline:none; color:var(--text); font-size:15px; line-height:1.6; resize:none; min-height:90px; font-family:inherit; }
-.voice-input-box textarea::placeholder { color:var(--muted); }
-.voice-langs { display:flex; gap:8px; overflow-x:auto; scrollbar-width:none; margin-bottom:16px; }
-.voice-langs::-webkit-scrollbar { display:none; }
-.lang-chip { flex-shrink:0; padding:8px 14px; border-radius:50px; font-size:12px; font-weight:600; cursor:pointer; border:1px solid var(--border); background:var(--bg3); color:var(--muted); transition:all 0.2s; }
-.lang-chip.active { background:rgba(124,58,237,0.2); border-color:var(--accent2); color:var(--accent2); }
-.voice-controls { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:16px; }
-.voice-ctrl { background:var(--bg3); border:1px solid var(--border); border-radius:14px; padding:14px; }
-.voice-ctrl label { display:block; font-size:11px; color:var(--muted); font-weight:600; margin-bottom:8px; }
-.voice-ctrl input[type=range] { width:100%; accent-color:var(--accent2); }
-.speak-btn { width:100%; padding:16px; border-radius:50px; background:linear-gradient(135deg,#ec4899,#a855f7); color:white; font-size:16px; font-weight:800; border:none; cursor:pointer; transition:all 0.2s; }
-.speak-btn:active { transform:scale(0.97); }
-.speak-btn.speaking { background:linear-gradient(135deg,#dc2626,#ef4444); animation:pulse 1.5s infinite; }
+/* Scrollable chips */
+.scroll-row { display:flex; gap:8px; overflow-x:auto; padding-bottom:4px; scrollbar-width:none; }
+.scroll-row::-webkit-scrollbar { display:none; }
+
+/* Badges */
+.badge-free { display:inline-flex; align-items:center; gap:4px; padding:3px 8px; background:rgba(16,185,129,0.15); border:1px solid rgba(16,185,129,0.3); border-radius:50px; font-size:10px; font-weight:700; color:#10b981; }
+
+/* Progress bar */
+.progress-bar { height:3px; background:var(--border); border-radius:2px; overflow:hidden; margin-top:8px; }
+.progress-fill { height:100%; background:linear-gradient(90deg,var(--accent),var(--accent2)); border-radius:2px; width:0%; transition:width 0.5s; }
+
+/* Counter for loading */
+.loading-counter { font-size:28px; font-weight:900; color:var(--accent2); }
 </style>
 </head>
 <body>
 <div id="app">
-  <div class="header">
-    <div class="logo">
-      <div class="logo-icon">✨</div>
-      <span class="logo-text">LuminaAI</span>
-    </div>
-    <div class="header-badges">
-      <span class="badge-free">✦ FREE</span>
-      <div class="badge-notif" onclick="toast('No new notifications','info')">🔔</div>
-    </div>
-  </div>
-
-  <!-- PAGES -->
-  <div class="page" id="page-container"></div>
-
-  <!-- NAV -->
-  <div class="nav">
-    <div class="nav-item active" id="nav-home" onclick="setPage('home')">
-      <span class="nav-ico">🏠</span><span>Home</span>
-    </div>
-    <div class="nav-item" id="nav-explore" onclick="setPage('explore')">
-      <span class="nav-ico">🔭</span><span>Explore</span>
-    </div>
-    <div class="nav-create" onclick="setPage('create')">✨</div>
-    <div class="nav-item" id="nav-gallery" onclick="setPage('gallery')">
-      <span class="nav-ico">🖼</span><span>Gallery</span>
-    </div>
-    <div class="nav-item" id="nav-profile" onclick="setPage('profile')">
-      <span class="nav-ico">👤</span><span>Profile</span>
-    </div>
+  <div id="page"></div>
+  <nav id="nav">
+    <button class="nav-btn active" onclick="navigate('home')" id="nav-home">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+      Feed
+    </button>
+    <button class="nav-btn" onclick="navigate('create')" id="nav-create">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+      Create
+    </button>
+    <button class="nav-btn" onclick="navigate('effects')" id="nav-effects">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+      Effects
+    </button>
+    <button class="nav-btn" onclick="navigate('explore')" id="nav-explore">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      Explore
+    </button>
+    <button class="nav-btn" onclick="navigate('gallery')" id="nav-gallery">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+      Gallery
+    </button>
+  </nav>
+</div>
+<div id="lightbox">
+  <button id="lightbox-close" onclick="closeLightbox()">✕</button>
+  <img id="lightbox-img" src="" alt="">
+  <div id="lightbox-actions">
+    <button onclick="downloadFromLightbox()">⬇ Save</button>
+    <button onclick="shareFromLightbox()">📤 Share</button>
   </div>
 </div>
-
-<!-- LIGHTBOX -->
-<div class="lightbox" id="lightbox">
-  <button class="lb-close" onclick="closeLightbox()">✕</button>
-  <img id="lb-img" src="" alt="">
-  <div class="lb-actions">
-    <button class="lb-btn primary" onclick="downloadLightboxImg()">⬇ Save</button>
-    <button class="lb-btn secondary" onclick="saveToGalleryFromLb()">🖼 Gallery</button>
-  </div>
-</div>
-
-<!-- TOAST CONTAINER -->
-<div class="toast-wrap" id="toast-wrap"></div>
+<div id="toast-container"></div>
 
 <script>
-// ==================== DATA ====================
+// ===== STATE =====
 let gallery = JSON.parse(localStorage.getItem('lumina_gallery') || '[]');
 let currentPage = 'home';
-let lightboxUrl = '';
+let effectsImageData = null;
+let effectsCtx = null;
+let currentStyle = 'realistic';
+let currentSize = 'square';
+let currentLang = 'en-US';
+let voiceRate = 1.0;
+let voicePitch = 1.0;
+let currentEffect = 'none';
+let inputImage = null;
+let currentMode = 'text'; // 'text' or 'image'
+let currentLightboxUrl = '';
+let exploreCategory = 'trending';
+let voices = [];
+let isSpeaking = false;
 
-const FEED_ITEMS = [
-  {p:'futuristic neon tokyo cyberpunk rain reflection', label:'Tokyo Neon', style:'Cyberpunk'},
-  {p:'majestic dragon soaring through storm clouds fantasy epic', label:'Storm Dragon', style:'Fantasy'},
-  {p:'anime girl cherry blossoms spring kimono beautiful', label:'Cherry Blossom', style:'Anime'},
-  {p:'hyperrealistic portrait astronaut galaxy milky way', label:'Space Explorer', style:'Portrait'},
-  {p:'enchanted forest magical glowing mushrooms fairy light', label:'Magic Forest', style:'Fantasy'},
-  {p:'oil painting sunset mountains impressionist vibrant', label:'Sunset Vista', style:'Art'},
-  {p:'steampunk robot workshop gears Victorian brass', label:'Steam Workshop', style:'Steampunk'},
-  {p:'underwater city coral reef mermaid bioluminescent', label:'Deep City', style:'Sci-Fi'},
+const STYLES = [
+  {id:'realistic', name:'Realistic', emoji:'📸'},
+  {id:'anime', name:'Anime', emoji:'🌸'},
+  {id:'oil', name:'Oil Paint', emoji:'🎨'},
+  {id:'sketch', name:'Sketch', emoji:'✏️'},
+  {id:'neon', name:'Neon', emoji:'💜'},
+  {id:'watercolor', name:'Watercolor', emoji:'💧'},
+  {id:'3d', name:'3D Render', emoji:'🎲'},
+  {id:'pixel', name:'Pixel Art', emoji:'👾'},
+  {id:'vintage', name:'Vintage', emoji:'📷'},
+  {id:'dark', name:'Dark Fantasy', emoji:'🔮'},
+];
+
+const SIZES = {
+  square: {w:512, h:512, label:'Square', ico:'⬛'},
+  portrait: {w:512, h:768, label:'Portrait', ico:'📱'},
+  landscape: {w:768, h:512, label:'Wide', ico:'🖥'},
+};
+
+const EFFECTS = [
+  {id:'none', name:'Original', ico:'📷'},
+  {id:'vivid', name:'Vivid', ico:'🌈'},
+  {id:'bw', name:'B&W', ico:'⚫'},
+  {id:'sepia', name:'Sepia', ico:'🟤'},
+  {id:'blur', name:'Blur', ico:'🌫'},
+  {id:'sharp', name:'Sharpen', ico:'🔪'},
+  {id:'warm', name:'Warm', ico:'🔥'},
+  {id:'cool', name:'Cool', ico:'🧊'},
+  {id:'vintage', name:'Vintage', ico:'📸'},
+  {id:'dramatic', name:'Drama', ico:'🎭'},
+  {id:'fade', name:'Fade', ico:'🌥'},
+  {id:'neon', name:'Neon', ico:'💜'},
+  {id:'invert', name:'Invert', ico:'🔄'},
+  {id:'bright', name:'Bright', ico:'☀️'},
+  {id:'dark', name:'Dark', ico:'🌑'},
+  {id:'pink', name:'Pink', ico:'🌸'},
+];
+
+const LANGS = [
+  {code:'en-US', label:'🇺🇸 English'},
+  {code:'hi-IN', label:'🇮🇳 Hindi'},
+  {code:'es-ES', label:'🇪🇸 Spanish'},
+  {code:'fr-FR', label:'🇫🇷 French'},
+  {code:'de-DE', label:'🇩🇪 German'},
+  {code:'ja-JP', label:'🇯🇵 Japanese'},
+  {code:'pt-BR', label:'🇧🇷 Portuguese'},
+  {code:'ar-SA', label:'🇸🇦 Arabic'},
 ];
 
 const EXPLORE_CATS = [
-  {emoji:'🌌',name:'Space'},
-  {emoji:'🐉',name:'Fantasy'},
-  {emoji:'🤖',name:'Sci-Fi'},
-  {emoji:'🌸',name:'Anime'},
-  {emoji:'🏙',name:'Urban'},
-  {emoji:'🎨',name:'Abstract'},
-  {emoji:'🌊',name:'Nature'},
-  {emoji:'👾',name:'Pixel'},
+  {id:'trending', label:'🔥 Trending'},
+  {id:'anime', label:'🌸 Anime'},
+  {id:'fantasy', label:'🔮 Fantasy'},
+  {id:'nature', label:'🌿 Nature'},
+  {id:'scifi', label:'🚀 Sci-Fi'},
+  {id:'portrait', label:'👤 Portrait'},
+  {id:'cityscape', label:'🌆 City'},
+  {id:'abstract', label:'🎨 Abstract'},
 ];
 
-const EXPLORE_ITEMS = [
-  {p:'cosmic nebula planet formation purple blue', label:'Cosmic Birth', cat:'Space'},
-  {p:'fantasy castle floating island waterfall sunset', label:'Sky Castle', cat:'Fantasy'},
-  {p:'robot samurai neon city rain', label:'Cyber Samurai', cat:'Sci-Fi'},
-  {p:'anime magical girl transformation sparkles', label:'Magic Girl', cat:'Anime'},
-  {p:'rainy neon alley cyberpunk reflection', label:'Neon Alley', cat:'Urban'},
-  {p:'abstract fluid art colorful swirls', label:'Fluid Dream', cat:'Abstract'},
-  {p:'deep ocean bioluminescent jellyfish', label:'Ocean Glow', cat:'Nature'},
-  {p:'pixel art retro game landscape 8bit', label:'Pixel World', cat:'Pixel'},
-  {p:'black hole event horizon space warp', label:'Event Horizon', cat:'Space'},
-  {p:'dragon knight armor epic battle', label:'Dragon Knight', cat:'Fantasy'},
-  {p:'space station interior astronaut', label:'Space Station', cat:'Sci-Fi'},
-  {p:'anime landscape mountain cherry blossom', label:'Sakura Peak', cat:'Anime'},
-  {p:'graffiti wall urban art colorful', label:'Street Art', cat:'Urban'},
-  {p:'geometric abstract 3d shapes neon', label:'Neon Geometry', cat:'Abstract'},
-  {p:'waterfall rainbow tropical forest', label:'Rainbow Falls', cat:'Nature'},
-  {p:'pixel art city night retro', label:'Pixel City', cat:'Pixel'},
+const EXPLORE_PROMPTS = {
+  trending: ['stunning cyberpunk city night','beautiful fantasy landscape','epic dragon flying over mountains','neon Tokyo street at night','magical forest with glowing lights','futuristic space station','ancient temple in jungle','aurora borealis night sky'],
+  anime: ['anime girl cherry blossom','samurai warrior sunset','anime cityscape rain','magical girl transformation','ninja forest battle','anime beach sunset','mecha robot battle','studio ghibli style village'],
+  fantasy: ['dragon wizard battle','enchanted castle clouds','mythical unicorn forest','ancient ruins magic','fairy tale cottage','giant crystal cave','phoenix rising flames','mermaid underwater palace'],
+  nature: ['mountain sunrise mist','tropical waterfall paradise','deep ocean coral reef','autumn forest path','desert sand dunes sunset','arctic polar bear snow','tropical rainforest canopy','volcanic eruption dramatic'],
+  scifi: ['spaceship warp speed','alien planet twin moons','robot city future','quantum computer abstract','mars colony sunset','black hole event horizon','cybernetic human portrait','interstellar space nebula'],
+  portrait: ['beautiful woman golden hour','mysterious hooded figure','old wise wizard portrait','warrior queen armor','steampunk inventor','ethereal goddess light','rugged explorer jungle','cyberpunk hacker neon'],
+  cityscape: ['new york night aerial','paris eiffel tower rain','tokyo shibuya crossing night','dubai futuristic skyline','venice canal gondola','hong kong harbor lights','istanbul mosque silhouette','london fog bridge'],
+  abstract: ['fractal geometry colorful','liquid metal abstract','geometric neon pattern','cosmic energy swirls','digital glitch art','psychedelic color spiral','abstract light painting','neural network visualization'],
+};
+
+const FEED_ITEMS = [
+  {prompt:'cyberpunk girl neon city rain portrait', style:'Neon Noir'},
+  {prompt:'majestic dragon mountain summit clouds', style:'Fantasy'},
+  {prompt:'beautiful forest fairy glowing wings', style:'Magical'},
+  {prompt:'astronaut floating earth orbit sunrise', style:'Sci-Fi'},
+  {prompt:'ancient samurai temple cherry blossom', style:'Anime'},
+  {prompt:'underwater mermaid palace glowing coral', style:'Fantasy'},
+  {prompt:'futuristic city flying cars neon sunset', style:'Cyberpunk'},
+  {prompt:'mystical wolf aurora night forest', style:'Ethereal'},
+  {prompt:'steampunk inventor clockwork workshop', style:'Retro'},
+  {prompt:'phoenix rising golden flames dramatic', style:'Epic'},
 ];
 
-const STYLES = [
-  {id:'none', name:'No Style', icon:'🎯'},
-  {id:'photorealistic', name:'Photo Real', icon:'📷'},
-  {id:'anime', name:'Anime', icon:'🌸'},
-  {id:'oil-painting', name:'Oil Paint', icon:'🖌'},
-  {id:'watercolor', name:'Watercolor', icon:'💧'},
-  {id:'cyberpunk', name:'Cyberpunk', icon:'🤖'},
-  {id:'fantasy', name:'Fantasy', icon:'🐉'},
-  {id:'3d-render', name:'3D Render', icon:'💎'},
-  {id:'pixel-art', name:'Pixel Art', icon:'👾'},
-];
-
-const EFFECTS = [
-  {id:'original',name:'Original',icon:'🖼',filter:'none'},
-  {id:'vivid',name:'Vivid',icon:'🌈',filter:'saturate(2) contrast(1.1)'},
-  {id:'cinematic',name:'Cinematic',icon:'🎬',filter:'contrast(1.2) brightness(0.9) sepia(0.1)'},
-  {id:'neon',name:'Neon Glow',icon:'✨',filter:'saturate(3) brightness(1.2) contrast(1.3)'},
-  {id:'vintage',name:'Vintage',icon:'📷',filter:'sepia(0.7) contrast(1.1) brightness(0.95)'},
-  {id:'bw',name:'B&W',icon:'⚫',filter:'grayscale(1) contrast(1.1)'},
-  {id:'cool',name:'Cool Tone',icon:'❄️',filter:'hue-rotate(200deg) saturate(1.3)'},
-  {id:'warm',name:'Warm Tone',icon:'🌅',filter:'hue-rotate(-20deg) saturate(1.4) brightness(1.05)'},
-  {id:'dramatic',name:'Dramatic',icon:'🎭',filter:'contrast(1.5) brightness(0.8) saturate(1.2)'},
-  {id:'soft',name:'Soft',icon:'🌸',filter:'blur(0.5px) brightness(1.1) saturate(0.9)'},
-  {id:'sharp',name:'Sharpen',icon:'🔪',filter:'contrast(1.3) saturate(1.1)'},
-  {id:'fade',name:'Faded',icon:'🌫',filter:'opacity(0.85) brightness(1.1) saturate(0.7)'},
-];
-
-const LANGUAGES = [
-  {code:'en-US',name:'English 🇺🇸'},
-  {code:'hi-IN',name:'Hindi 🇮🇳'},
-  {code:'ja-JP',name:'Japanese 🇯🇵'},
-  {code:'ko-KR',name:'Korean 🇰🇷'},
-  {code:'fr-FR',name:'French 🇫🇷'},
-  {code:'de-DE',name:'German 🇩🇪'},
-  {code:'es-ES',name:'Spanish 🇪🇸'},
-  {code:'zh-CN',name:'Chinese 🇨🇳'},
-];
-
-// ==================== STATE ====================
-let selectedStyle = 'none';
-let selectedSize = {w:512,h:512,id:'square'};
-let uploadedImage = null;
-let effectsImage = null;
-let selectedEffect = 'vivid';
-let selectedLang = 'en-US';
-let voiceRate = 1.0;
-let voicePitch = 1.0;
-let isSpeaking = false;
-let currentSpeech = null;
-let exploreCat = 'Space';
-let genRetries = 0;
-
+// ===== UTILS =====
 function pUrl(prompt, w, h, seed) {
-  const enc = encodeURIComponent(prompt.trim().substring(0,200));
-  const s = seed || Math.floor(Math.random()*99999);
+  const s = seed || Math.floor(Math.random() * 999999);
+  const enc = encodeURIComponent(prompt.trim().substring(0, 200));
   return `https://image.pollinations.ai/prompt/${enc}?width=${w}&height=${h}&seed=${s}&nologo=true`;
 }
 
-// ==================== GALLERY ====================
-function saveGallery() {
-  try { localStorage.setItem('lumina_gallery', JSON.stringify(gallery)); } catch(e) {}
-}
-function addToGallery(url, prompt, style) {
-  gallery.push({ url, prompt: (prompt||'').substring(0,80), style: style||'AI', ts: Date.now() });
-  if (gallery.length > 100) gallery = gallery.slice(-100);
-  saveGallery();
-  toast('Saved to Gallery! 🖼', 'success');
-}
-function deleteGallery(idx) {
-  gallery.splice(idx, 1);
-  saveGallery();
-  renderPage();
-  toast('Deleted', 'info');
-}
-function clearGallery() {
-  if (!confirm('Clear all saved images?')) return;
-  gallery = [];
-  saveGallery();
-  renderPage();
-  toast('Gallery cleared', 'info');
-}
-
-// ==================== TOAST ====================
-function toast(msg, type='info') {
-  const wrap = document.getElementById('toast-wrap');
+function toast(msg, type = 'info') {
   const el = document.createElement('div');
   el.className = `toast ${type}`;
   el.textContent = msg;
-  wrap.appendChild(el);
-  setTimeout(() => { el.classList.add('out'); setTimeout(() => el.remove(), 300); }, 2800);
+  document.getElementById('toast-container').appendChild(el);
+  setTimeout(() => el.classList.add('show'), 10);
+  setTimeout(() => { el.classList.remove('show'); setTimeout(() => el.remove(), 300); }, 3000);
 }
 
-// ==================== LIGHTBOX ====================
-function openLightbox(url) {
-  lightboxUrl = url;
-  document.getElementById('lb-img').src = url;
-  document.getElementById('lightbox').classList.add('open');
-  document.body.style.overflow = 'hidden';
-}
-function closeLightbox() {
-  document.getElementById('lightbox').classList.remove('open');
-  document.body.style.overflow = '';
-}
-function downloadLightboxImg() {
-  downloadImage(lightboxUrl);
-}
-function saveToGalleryFromLb() {
-  addToGallery(lightboxUrl, 'Saved from lightbox', 'Saved');
-}
-function downloadImage(url, filename) {
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = filename || 'lumina-ai-' + Date.now() + '.jpg';
-  a.target = '_blank';
-  a.click();
-  toast('Downloading image... ⬇', 'info');
-}
-
-// ==================== NAV ====================
-function setPage(page) {
+function navigate(page) {
   currentPage = page;
-  ['home','explore','create','gallery','profile'].forEach(p => {
-    const el = document.getElementById(`nav-${p}`);
-    if (el) el.classList.toggle('active', p === page);
-  });
-  renderPage();
-  document.getElementById('page-container').scrollTop = 0;
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('nav-' + page)?.classList.add('active');
+  renderPage(page);
 }
 
-function renderPage() {
-  const c = document.getElementById('page-container');
-  if (currentPage === 'home') renderHome(c);
-  else if (currentPage === 'explore') renderExplore(c);
-  else if (currentPage === 'create') renderCreate(c);
-  else if (currentPage === 'gallery') renderGallery(c);
-  else if (currentPage === 'profile') renderProfile(c);
+function renderPage(page) {
+  const p = document.getElementById('page');
+  if (page === 'home') renderHome(p);
+  else if (page === 'create') renderCreate(p);
+  else if (page === 'effects') renderEffects(p);
+  else if (page === 'explore') renderExplore(p);
+  else if (page === 'gallery') renderGallery(p);
 }
 
-// ==================== HOME ====================
+// ===== GALLERY =====
+function saveGallery() { localStorage.setItem('lumina_gallery', JSON.stringify(gallery)); }
+function addToGallery(url, prompt, style) {
+  const exists = gallery.some(g => g.url === url);
+  if (!exists) {
+    gallery.unshift({url, prompt, style, date: new Date().toLocaleDateString()});
+    if (gallery.length > 50) gallery.pop();
+    saveGallery();
+    toast('Saved to Gallery! 🖼', 'success');
+  }
+}
+
+// ===== HOME =====
 function renderHome(c) {
   c.innerHTML = `
-    <div class="hero-banner">
-      <div class="hero-tag">✦ AI Art Studio</div>
-      <h1 class="hero-title">Create <em>Stunning</em><br>AI Artwork Free</h1>
-      <p class="hero-sub">Generate, transform & explore AI images. No limits. No cost. No signup.</p>
-      <div class="hero-actions">
-        <button class="btn-primary" onclick="setPage('create')">✨ Create Now</button>
-        <button class="btn-outline" onclick="setPage('explore')">🔭 Explore</button>
-      </div>
+    <div class="page-header">
+      <div class="logo">✨ LuminaAI</div>
+      <span class="badge-free">🆓 100% Free</span>
     </div>
-
-    <div class="home-tabs">
-      <div class="home-tab active">🔥 Trending</div>
-      <div class="home-tab" onclick="toast('Coming soon!','info')">⭐ Featured</div>
-      <div class="home-tab" onclick="toast('Coming soon!','info')">🆕 New</div>
-      <div class="home-tab" onclick="setPage('gallery')">🖼 My Work</div>
+    <div style="padding:0 16px 8px">
+      <div style="font-size:13px;color:var(--muted)">Powered by Pollinations.AI</div>
     </div>
-
-    <div class="section-hdr">
-      <h2>🔥 Trending AI Art</h2>
-      <a onclick="setPage('explore')">See all →</a>
-    </div>
-    <div class="feed-grid" id="feed-grid"></div>
-    <div style="height:20px"></div>
-
-    <div class="section-hdr">
-      <h2>🎨 Quick Tools</h2>
-    </div>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:0 16px;margin-bottom:20px;">
-      ${[
-        {ico:'✨',name:'AI Image',sub:'Generate from text',page:'create'},
-        {ico:'🎨',name:'Effects',sub:'Filter & transform',page:'effects'},
-        {ico:'🗣',name:'Voice AI',sub:'Text to speech',page:'voice'},
-        {ico:'🔭',name:'Explore',sub:'Browse AI art',page:'explore'},
-      ].map(t=>`
-        <div onclick="setPage('${t.page}')" style="background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);padding:16px;cursor:pointer;transition:transform 0.15s;active:" ontouchstart="this.style.transform='scale(0.96)'" ontouchend="this.style.transform='scale(1)'">
-          <div style="font-size:28px;margin-bottom:8px">${t.ico}</div>
-          <div style="font-size:14px;font-weight:800;margin-bottom:2px">${t.name}</div>
-          <div style="font-size:11px;color:var(--muted)">${t.sub}</div>
+    <div class="section-title">🔥 Trending Now</div>
+    <div class="feed-grid" id="feed-grid">
+      ${FEED_ITEMS.map((item, i) => `
+        <div class="feed-card" onclick="openLightbox('${pUrl(item.prompt, 512, 680, 1000+i)}')">
+          <div class="feed-img-wrap">
+            <div class="shimmer" id="shimmer-feed-${i}"></div>
+            <img src="${pUrl(item.prompt, 512, 680, 1000+i)}"
+              loading="lazy"
+              class="loading"
+              onload="this.classList.remove('loading');document.getElementById('shimmer-feed-${i}')?.classList.add('hidden')"
+              onerror="this.src='${pUrl(item.prompt, 512, 680, 2000+i)}'"
+              alt="${item.style}">
+          </div>
+          <div class="feed-label">${item.style}<div class="feed-tag">${item.prompt.substring(0,30)}...</div></div>
         </div>
       `).join('')}
-    </div>
-  `;
-  // Render feed cards
-  const grid = document.getElementById('feed-grid');
-  FEED_ITEMS.forEach((item, i) => {
-    const seed = 1000 + i;
-    const url = pUrl(item.p, 512, 680, seed);
-    const card = document.createElement('div');
-    card.className = 'feed-card';
-    card.onclick = () => openLightbox(url);
-    // Shimmer placeholder
-    card.innerHTML = `<div class="feed-card-shimmer shimmer"></div>`;
-    grid.appendChild(card);
-    // Load image
-    const img = new Image();
-    img.crossOrigin = 'anonymous';
-    let retries = 0;
-    const load = () => {
-      img.src = url + `&_r=${retries}`;
-    };
-    img.onload = () => {
-      card.innerHTML = `
-        <img src="${img.src}" alt="${item.label}">
-        <div class="feed-card-label">
-          <span class="tag">${item.style}</span>
-          <p>${item.label}</p>
-        </div>`;
-    };
-    img.onerror = () => {
-      if (retries < 2) {
-        retries++;
-        setTimeout(load, 4000 * retries);
-      } else {
-        card.innerHTML = `
-          <div style="width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;padding:12px;text-align:center;">
-            <div style="font-size:28px">🎨</div>
-            <p style="font-size:10px;color:var(--muted);line-height:1.4">${item.label}</p>
-            <button onclick="event.stopPropagation();this.parentElement.parentElement.querySelector('.shimmer')&&(location.href=location.href)" style="font-size:10px;padding:5px 10px;border-radius:20px;background:rgba(124,58,237,0.2);border:1px solid rgba(124,58,237,0.3);color:var(--accent2);cursor:pointer;">Retry</button>
-          </div>`;
-      }
-    };
-    load();
-  });
+    </div>`;
 }
 
-// ==================== CREATE ====================
-let createMode = 'text'; // 'text' or 'image'
+// ===== CREATE =====
 function renderCreate(c) {
+  const sz = SIZES[currentSize];
   c.innerHTML = `
     <div class="create-page">
-      <div class="create-hero">
-        <h2>✨ AI Image Creator</h2>
-        <p>Turn your words & images into stunning AI art — free</p>
+      <div class="page-header" style="padding:0 0 8px">
+        <div>
+          <div class="create-title">✨ AI Image</div>
+          <div class="create-sub">Generate stunning images free</div>
+        </div>
+        <span class="badge-free">🆓 Free</span>
       </div>
 
-      <!-- Mode toggle -->
-      <div style="display:flex;gap:8px;margin-bottom:16px;background:var(--bg3);border-radius:50px;padding:4px;border:1px solid var(--border);">
-        <button id="mode-text" onclick="switchMode('text')" style="flex:1;padding:10px;border-radius:50px;border:none;font-size:13px;font-weight:700;cursor:pointer;transition:all 0.2s;${createMode==='text'?'background:linear-gradient(135deg,var(--accent),var(--cyan));color:white':'background:transparent;color:var(--muted)'}">📝 Text to Image</button>
-        <button id="mode-img" onclick="switchMode('image')" style="flex:1;padding:10px;border-radius:50px;border:none;font-size:13px;font-weight:700;cursor:pointer;transition:all 0.2s;${createMode==='image'?'background:linear-gradient(135deg,var(--accent),var(--cyan));color:white':'background:transparent;color:var(--muted)'}">🖼 Image Prompt</button>
+      <div class="mode-tabs">
+        <div class="mode-tab ${currentMode==='text'?'active':''}" onclick="switchMode('text')">📝 Text Prompt</div>
+        <div class="mode-tab ${currentMode==='image'?'active':''}" onclick="switchMode('image')">🖼 Image + Prompt</div>
       </div>
 
-      <!-- Image upload (shown in image mode) -->
-      <div id="img-upload-section" style="${createMode==='image'?'':'display:none'}">
-        <div id="upload-area" class="img-upload-area" onclick="document.getElementById('create-img-input').click()">
-          <div id="upload-content">
-            <div class="upload-ico">📷</div>
-            <p>Tap to upload a reference image</p>
-            <p class="upload-hint">JPG, PNG, WEBP supported</p>
+      ${currentMode === 'image' ? `
+        ${inputImage ? `
+          <div class="img-preview-wrap">
+            <img src="${inputImage}" alt="Input">
+            <button class="remove-img" onclick="removeInputImage()">✕</button>
           </div>
-        </div>
-        <input type="file" id="create-img-input" accept="image/*" style="display:none" onchange="handleCreateImgUpload(this)">
-      </div>
-
-      <!-- Prompt -->
-      <div class="prompt-box">
-        <textarea id="create-prompt" rows="3" placeholder="${createMode==='image'?'Describe what to add or change in the image...':'Describe your image in detail... e.g. a glowing dragon over Tokyo at night'}" maxlength="400"></textarea>
-        <div class="prompt-actions">
-          <div class="prompt-actions-left">
-            <button class="small-btn accent" onclick="enhancePrompt()">🪄 Enhance</button>
-            <button class="small-btn" onclick="document.getElementById('create-prompt').value=''">✕ Clear</button>
+          <div style="padding:8px 12px;background:rgba(16,185,129,0.1);border:1px solid rgba(16,185,129,0.3);border-radius:10px;font-size:12px;color:#10b981;margin-bottom:12px;">✅ Image uploaded — describe how to transform it below</div>
+        ` : `
+          <div class="img-upload" onclick="document.getElementById('img-input').click()">
+            <div style="font-size:40px;margin-bottom:8px">📸</div>
+            <h4>Upload Your Photo</h4>
+            <p>Tap to select from gallery</p>
+            <div style="margin-top:10px;padding:6px 16px;background:rgba(124,58,237,0.15);border:1px solid rgba(124,58,237,0.3);border-radius:50px;display:inline-block;font-size:12px;color:var(--accent2);font-weight:700">Browse Photos</div>
           </div>
-          <span id="char-count" style="font-size:11px;color:var(--muted)">0/400</span>
-        </div>
+          <input type="file" id="img-input" accept="image/*" style="display:none" onchange="handleImageUpload(this)">
+        `}
+      ` : ''}
+
+      <div class="prompt-wrap">
+        <textarea id="create-prompt" class="prompt-input"
+          placeholder="Describe your image... e.g. 'beautiful sunset over mountains with dramatic clouds'"
+          rows="4">${''}</textarea>
+        <button class="clear-btn" onclick="document.getElementById('create-prompt').value=''">✕</button>
       </div>
 
-      <!-- Styles -->
-      <div style="margin-bottom:16px;">
-        <div style="font-size:12px;font-weight:700;color:var(--muted);margin-bottom:8px;padding:0 2px;text-transform:uppercase;letter-spacing:1px;">Style</div>
-        <div class="style-scroll">
-          ${STYLES.map(s=>`<div class="style-chip ${selectedStyle===s.id?'active':''}" onclick="selectStyle('${s.id}')">${s.icon} ${s.name}</div>`).join('')}
-        </div>
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+        <div style="font-size:12px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:0.5px">Style</div>
+        <button onclick="enhancePrompt()" style="background:rgba(124,58,237,0.15);border:1px solid rgba(124,58,237,0.3);border-radius:8px;padding:5px 10px;color:var(--accent2);font-size:11px;font-weight:700;cursor:pointer">✨ Enhance</button>
+      </div>
+      <div class="style-chips scroll-row" style="margin-bottom:16px">
+        ${STYLES.map(s => `<div class="style-chip ${currentStyle===s.id?'active':''}" onclick="selectStyle('${s.id}')">${s.emoji} ${s.name}</div>`).join('')}
       </div>
 
-      <!-- Size -->
-      <div style="margin-bottom:20px;">
-        <div style="font-size:12px;font-weight:700;color:var(--muted);margin-bottom:8px;padding:0 2px;text-transform:uppercase;letter-spacing:1px;">Size</div>
-        <div class="size-grid">
-          ${[
-            {id:'square',label:'Square',ratio:'1:1',w:512,h:512,ico:'⬛'},
-            {id:'portrait',label:'Portrait',ratio:'3:4',w:384,h:512,ico:'📱'},
-            {id:'landscape',label:'Landscape',ratio:'4:3',w:512,h:384,ico:'🖥'},
-          ].map(s=>`
-            <div class="size-btn ${selectedSize.id===s.id?'active':''}" onclick="selectSize('${s.id}',${s.w},${s.h})">
-              <div class="ratio">${s.ico}</div>
-              <div class="label">${s.label} ${s.ratio}</div>
-            </div>
-          `).join('')}
-        </div>
+      <div style="font-size:12px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px">Size</div>
+      <div class="size-row" style="margin-bottom:20px">
+        ${Object.entries(SIZES).map(([id, s]) => `
+          <div class="size-opt ${currentSize===id?'active':''}" onclick="selectSize('${id}')">
+            <div class="size-ico">${s.ico}</div>
+            <div class="size-lbl">${s.label}</div>
+            <div style="font-size:9px;color:var(--muted)">${s.w}×${s.h}</div>
+          </div>
+        `).join('')}
       </div>
 
-      <!-- Generate button -->
       <button class="gen-btn" id="gen-btn" onclick="generateImage()">
         ✨ Generate Image
       </button>
 
-      <!-- Result -->
-      <div id="result-area"></div>
+      <div id="result-area" class="result-area"></div>
     </div>
-  `;
-  // Char counter
-  const ta = document.getElementById('create-prompt');
-  ta.addEventListener('input', () => {
-    document.getElementById('char-count').textContent = ta.value.length + '/400';
+    <input type="file" id="img-input" accept="image/*" style="display:none" onchange="handleImageUpload(this)">`;
+}
+
+function switchMode(m) {
+  currentMode = m;
+  navigate('create');
+}
+
+function selectStyle(id) {
+  currentStyle = id;
+  document.querySelectorAll('.style-chip').forEach(c => {
+    c.classList.toggle('active', c.textContent.trim().toLowerCase().includes(STYLES.find(s=>s.id===id)?.name.toLowerCase()));
   });
+  // Re-render style chips
+  const chips = document.querySelector('.style-chips');
+  if (chips) {
+    chips.querySelectorAll('.style-chip').forEach(chip => {
+      const style = STYLES.find(s => chip.textContent.includes(s.name));
+      if (style) chip.classList.toggle('active', style.id === id);
+    });
+  }
 }
 
-function switchMode(mode) {
-  createMode = mode;
-  renderPage();
+function selectSize(id) {
+  currentSize = id;
+  document.querySelectorAll('.size-opt').forEach(o => o.classList.remove('active'));
+  event?.target?.closest('.size-opt')?.classList.add('active');
+  // Re-render
+  renderPage('create');
 }
 
-function handleCreateImgUpload(input) {
+function removeInputImage() {
+  inputImage = null;
+  renderPage('create');
+}
+
+function handleImageUpload(input) {
   const file = input.files[0];
   if (!file) return;
   const reader = new FileReader();
-  reader.onload = (e) => {
-    uploadedImage = e.target.result;
-    const area = document.getElementById('upload-area');
-    area.innerHTML = `
-      <div class="img-preview-wrap" style="margin:0">
-        <img src="${uploadedImage}" style="width:100%;max-height:200px;object-fit:cover;border-radius:12px;display:block;">
-        <button class="remove-img" onclick="event.stopPropagation();removeUploadedImg()">✕</button>
-      </div>`;
-    toast('Image uploaded! ✓', 'success');
+  reader.onload = e => {
+    inputImage = e.target.result;
+    renderPage('create');
   };
   reader.readAsDataURL(file);
 }
 
-function removeUploadedImg() {
-  uploadedImage = null;
-  const area = document.getElementById('upload-area');
-  area.innerHTML = `
-    <div id="upload-content">
-      <div class="upload-ico">📷</div>
-      <p>Tap to upload a reference image</p>
-      <p class="upload-hint">JPG, PNG, WEBP supported</p>
-    </div>`;
-}
-
-function selectStyle(id) {
-  selectedStyle = id;
-  document.querySelectorAll('.style-chip').forEach(el => {
-    const s = STYLES.find(s=>s.id===el.dataset.id||el.textContent.includes(STYLES.find(x=>x.id===id)?.icon));
-    el.classList.toggle('active', el.onclick?.toString().includes(`'${id}'`));
-  });
-  renderPage();
-}
-
-function selectSize(id, w, h) {
-  selectedSize = {id,w,h};
-  renderPage();
-}
-
 async function enhancePrompt() {
   const ta = document.getElementById('create-prompt');
-  const prompt = ta.value.trim();
-  if (!prompt) { toast('Type a prompt first!', 'error'); return; }
-  toast('✨ Enhancing your prompt...', 'info');
+  if (!ta) return;
+  const original = ta.value.trim();
+  if (!original) { toast('Enter a prompt first!', 'info'); return; }
+  toast('✨ Enhancing prompt...', 'info');
   try {
-    const url = `https://text.pollinations.ai/${encodeURIComponent('Enhance this image prompt to be more detailed and creative (return ONLY the enhanced prompt, max 180 chars): ' + prompt)}`;
+    const enhPrompt = `Enhance this image generation prompt to be more detailed and vivid (max 50 words, return only the enhanced prompt): "${original}"`;
+    const url = `https://text.pollinations.ai/${encodeURIComponent(enhPrompt)}`;
     const res = await fetch(url);
-    const text = await res.text();
-    if (text && text.length > 5) {
-      ta.value = text.trim().substring(0,400);
-      document.getElementById('char-count').textContent = ta.value.length + '/400';
-      toast('Prompt enhanced! 🪄', 'success');
-    }
-  } catch(e) { toast('Could not enhance, try again', 'error'); }
+    if (res.ok) {
+      const enhanced = await res.text();
+      ta.value = enhanced.trim().replace(/^["']|["']$/g, '');
+      toast('Prompt enhanced! ✨', 'success');
+    } else throw new Error();
+  } catch(e) {
+    toast('Enhancement unavailable', 'error');
+  }
 }
 
+// ===== BULLETPROOF IMAGE GENERATION =====
 function generateImage() {
-  const ta = document.getElementById('create-prompt');
-  const prompt = ta.value.trim();
-  if (!prompt) { toast('Please describe your image!', 'error'); return; }
+  const prompt = document.getElementById('create-prompt')?.value?.trim();
+  if (!prompt) { toast('Please enter a prompt!', 'info'); return; }
 
   const btn = document.getElementById('gen-btn');
-  btn.disabled = true;
-  btn.innerHTML = '⏳ Generating...';
-  genRetries = 0;
+  if (btn) { btn.disabled = true; btn.innerHTML = '⏳ Generating...'; }
 
-  const styleObj = STYLES.find(s=>s.id===selectedStyle) || STYLES[0];
-  const fullPrompt = selectedStyle !== 'none' ? `${prompt}, ${styleObj.name} style, highly detailed, masterpiece` : `${prompt}, highly detailed, masterpiece`;
-  const seed = Math.floor(Math.random()*99999);
-  const url = pUrl(fullPrompt, selectedSize.w, selectedSize.h, seed);
+  const styleObj = STYLES.find(s => s.id === currentStyle) || STYLES[0];
+  const sz = SIZES[currentSize];
+  const stylePrompt = currentMode === 'image' && inputImage
+    ? `${prompt}, transform in style of ${styleObj.name} art, ${styleObj.id} style`
+    : `${prompt}, ${styleObj.id} style, high quality, detailed`;
+
+  const seed = Math.floor(Math.random() * 999999);
+  const imgUrl = pUrl(stylePrompt, sz.w, sz.h, seed);
 
   const resultArea = document.getElementById('result-area');
-  let progress = 0;
-  resultArea.innerHTML = `
-    <div class="generating-state">
-      <div class="gen-spinner"></div>
-      <div class="gen-status" id="gen-status">Creating your artwork...</div>
-      <div class="gen-sub" id="gen-sub">This takes 10–20 seconds. Hang tight! ☕</div>
-      <div class="gen-progress"><div class="gen-progress-bar" id="gen-bar" style="width:5%"></div></div>
-    </div>`;
-  resultArea.scrollIntoView({behavior:'smooth',block:'start'});
+  if (!resultArea) return;
 
-  const interval = setInterval(() => {
-    progress = Math.min(progress + 3, 90);
-    const bar = document.getElementById('gen-bar');
-    const status = document.getElementById('gen-status');
-    const sub = document.getElementById('gen-sub');
-    if (bar) bar.style.width = progress + '%';
-    if (progress > 40 && status) status.textContent = 'Adding details...';
-    if (progress > 70 && status) status.textContent = 'Almost done...';
-    if (progress > 50 && sub) sub.textContent = 'Almost there! 🎨';
-  }, 600);
-
-  const img = new Image();
-  img.crossOrigin = 'anonymous';
-
-  const tryLoad = (attempt) => {
-    img.src = url + `&_a=${attempt}&t=${Date.now()}`;
-  };
-
-  img.onload = () => {
-    clearInterval(interval);
-    addToGallery(url, prompt, styleObj.name);
-    resultArea.innerHTML = `
-      <div class="result-wrap">
-        <div class="result-img-wrap">
-          <img src="${img.src}" alt="${prompt}" onclick="openLightbox('${img.src}')">
-          <span class="result-badge">✓ Generated</span>
-        </div>
-        <div class="result-actions">
-          <button class="result-act-btn save" onclick="addToGallery('${url}','${prompt.replace(/'/g,"\\'")}','${styleObj.name}')">🖼 Gallery</button>
-          <button class="result-act-btn download" onclick="downloadImage('${img.src}')">⬇ Save</button>
-          <button class="result-act-btn share" onclick="shareImage('${img.src}','${prompt.replace(/'/g,"\\'")}')">📤 Share</button>
-          <button class="result-act-btn remix" onclick="document.getElementById('create-prompt').value='${prompt.replace(/'/g,"\\'")}';window.scrollTo(0,0)">🔄 Remix</button>
-        </div>
-        <div style="margin-top:12px;padding:12px;background:var(--bg3);border-radius:14px;border:1px solid var(--border);">
-          <div style="font-size:11px;color:var(--muted);margin-bottom:4px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;">Prompt Used</div>
-          <div style="font-size:13px;color:var(--text);line-height:1.5">${prompt}</div>
-        </div>
-      </div>`;
-    btn.disabled = false;
-    btn.innerHTML = '✨ Generate Again';
-    toast('Image created! 🎉', 'success');
-  };
-
-  img.onerror = () => {
-    if (genRetries < 3) {
-      genRetries++;
-      const status = document.getElementById('gen-status');
-      const sub = document.getElementById('gen-sub');
-      if (status) status.textContent = `Retrying... (attempt ${genRetries+1}/4)`;
-      if (sub) sub.textContent = 'Server busy — retrying in 15 seconds... ☕';
-      setTimeout(() => tryLoad(genRetries), 15000);
-    } else {
-      clearInterval(interval);
-      resultArea.innerHTML = `
-        <div style="text-align:center;padding:30px 20px;background:var(--bg3);border-radius:var(--radius);margin-top:16px;border:1px solid var(--border);">
-          <div style="font-size:40px;margin-bottom:12px">⚠️</div>
-          <div style="font-size:16px;font-weight:700;margin-bottom:6px">Generation Failed</div>
-          <div style="font-size:13px;color:var(--muted);margin-bottom:16px">Check your internet connection and try again</div>
-          <button class="btn-primary" onclick="generateImage()">🔄 Try Again</button>
-          <div style="margin-top:12px">
-            <a href="${url}" target="_blank" style="font-size:12px;color:var(--accent2);">Open directly in browser →</a>
-          </div>
-        </div>`;
-      btn.disabled = false;
-      btn.innerHTML = '✨ Generate Image';
+  // Show loading state with timer
+  let elapsed = 0;
+  const timer = setInterval(() => {
+    elapsed++;
+    const counter = document.getElementById('load-counter');
+    const bar = document.getElementById('load-bar');
+    if (counter) counter.textContent = elapsed + 's';
+    if (bar) bar.style.width = Math.min(elapsed * 3.3, 95) + '%';
+    if (elapsed > 60) {
+      const subtext = document.getElementById('load-sub');
+      if (subtext) subtext.textContent = 'Almost there... 🎨';
     }
-  };
+  }, 1000);
 
-  tryLoad(0);
+  resultArea.innerHTML = `
+    <div class="result-card">
+      <div class="result-img-container" id="result-img-container">
+        <div class="img-loader" id="img-loader">
+          <div class="spinner"></div>
+          <div class="loader-text">Creating your image...</div>
+          <div id="load-counter" class="loading-counter">0s</div>
+          <div id="load-sub" class="loader-sub">Pollinations.AI is working its magic ✨<br>This takes 15–30 seconds</div>
+          <div class="progress-bar" style="width:200px">
+            <div class="progress-fill" id="load-bar"></div>
+          </div>
+        </div>
+        <img id="gen-img" src="${imgUrl}" alt="${prompt}"
+          style="display:none"
+          onload="onImageLoaded('${imgUrl}','${prompt.replace(/'/g, "\\'")}','${styleObj.name}')"
+          onerror="onImageError('${prompt.replace(/'/g, "\\'")}','${styleObj.name}',${seed})">
+      </div>
+    </div>`;
+
+  // Timeout: if 90s pass and still loading, show manual retry
+  setTimeout(() => {
+    clearInterval(timer);
+    const loader = document.getElementById('img-loader');
+    if (loader && !loader.classList.contains('hidden')) {
+      loader.innerHTML = `
+        <div class="fail-state">
+          <div class="fail-ico">⏱</div>
+          <h3>Taking too long</h3>
+          <p>Pollinations is busy right now</p>
+          <button class="gen-btn" style="max-width:200px" onclick="generateImage()">🔄 Try Again</button>
+          <div style="margin-top:12px"><a href="${imgUrl}" target="_blank" style="font-size:12px;color:var(--accent2)">Open image directly →</a></div>
+        </div>`;
+      if (btn) { btn.disabled = false; btn.innerHTML = '✨ Generate Image'; }
+    }
+  }, 90000);
+
+  // Store timer ref for cleanup
+  window._genTimer = timer;
+}
+
+function onImageLoaded(url, prompt, styleName) {
+  clearInterval(window._genTimer);
+  const container = document.getElementById('result-img-container');
+  const loader = document.getElementById('img-loader');
+  const img = document.getElementById('gen-img');
+  const btn = document.getElementById('gen-btn');
+
+  if (loader) loader.classList.add('hidden');
+  if (img) img.style.display = 'block';
+
+  // Add actions below
+  const resultArea = document.getElementById('result-area');
+  if (resultArea) {
+    const actionsDiv = document.createElement('div');
+    actionsDiv.innerHTML = `
+      <div class="result-actions">
+        <button class="act-btn primary" onclick="addToGallery('${url}','${prompt.replace(/'/g,"\\'")}','${styleName}')">🖼 Save to Gallery</button>
+        <button class="act-btn" onclick="downloadImage('${url}')">⬇ Download</button>
+        <button class="act-btn" onclick="shareImage('${url}','${prompt.replace(/'/g,"\\'")}')">📤 Share</button>
+        <button class="act-btn" onclick="generateImage()">🔄 Regenerate</button>
+      </div>
+      <div class="prompt-used">💬 <strong>Prompt:</strong> ${prompt}</div>`;
+    resultArea.querySelector('.result-card')?.appendChild(actionsDiv);
+  }
+
+  if (btn) { btn.disabled = false; btn.innerHTML = '✨ Generate Again'; }
+  addToGallery(url, prompt, styleName);
+  toast('Image created! 🎉', 'success');
+}
+
+function onImageError(prompt, styleName, originalSeed) {
+  clearInterval(window._genTimer);
+  const btn = document.getElementById('gen-btn');
+  const sz = SIZES[currentSize];
+  const styleObj = STYLES.find(s => s.id === currentStyle) || STYLES[0];
+  const newSeed = originalSeed + Math.floor(Math.random() * 1000);
+  const newUrl = pUrl(`${prompt}, ${styleObj.id} style, high quality`, sz.w, sz.h, newSeed);
+
+  const loader = document.getElementById('img-loader');
+  if (loader) {
+    loader.innerHTML = `
+      <div class="fail-state">
+        <div class="fail-ico">🔄</div>
+        <h3>Server Busy</h3>
+        <p>Pollinations.AI is overloaded right now. Try again!</p>
+        <button class="gen-btn" style="max-width:200px;margin-bottom:12px" onclick="generateImage()">🔄 Retry</button>
+        <div><a href="${newUrl}" target="_blank" style="font-size:12px;color:var(--accent2)">Or open image directly →</a></div>
+      </div>`;
+  }
+
+  if (btn) { btn.disabled = false; btn.innerHTML = '✨ Try Again'; }
+}
+
+function downloadImage(url) {
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'lumina-ai-' + Date.now() + '.jpg';
+  a.target = '_blank';
+  a.click();
+  toast('Downloading...', 'success');
 }
 
 function shareImage(url, prompt) {
   if (navigator.share) {
-    navigator.share({ title: 'LuminaAI Creation', text: prompt, url: url })
-      .then(() => toast('Shared! 🚀', 'success'))
-      .catch(() => toast('Share cancelled', 'info'));
+    navigator.share({ title: 'LuminaAI Creation', text: prompt, url });
   } else {
     navigator.clipboard?.writeText(url).then(() => toast('Image URL copied! 📋', 'success'));
   }
 }
 
-// ==================== EFFECTS ====================
+// ===== EFFECTS =====
 function renderEffects(c) {
   c.innerHTML = `
     <div class="effects-page">
-      <div style="text-align:center;padding:16px 0 20px">
-        <h2 style="font-size:22px;font-weight:900;margin-bottom:6px">🎨 Photo Effects</h2>
-        <p style="font-size:13px;color:var(--muted)">Upload a photo and apply stunning AI effects</p>
+      <div class="page-header" style="padding:0 0 16px">
+        <div>
+          <div class="create-title">🎨 Photo Effects</div>
+          <div class="create-sub">Apply stunning effects to your photos</div>
+        </div>
+        <span class="badge-free">🆓 Free</span>
       </div>
 
-      ${effectsImage ? `
-        <div class="effects-preview">
-          <canvas id="effects-canvas" style="width:100%;border-radius:var(--radius);display:block"></canvas>
-          <button class="change-img" onclick="changeEffectsImg()">📷 Change</button>
+      ${effectsImageData ? `
+        <div class="canvas-wrap">
+          <canvas id="effects-canvas"></canvas>
+          <button class="change-photo" onclick="document.getElementById('eff-file').click()">📷 Change</button>
         </div>
-        <input type="file" id="eff-input" accept="image/*" style="display:none" onchange="handleEffectsUpload(this)">
       ` : `
-        <div class="effects-upload" onclick="document.getElementById('eff-input').click()">
-          <div class="up-ico">📷</div>
+        <div class="effects-upload" onclick="document.getElementById('eff-file').click()">
+          <div class="eff-ico">📷</div>
           <h3>Upload Your Photo</h3>
-          <p>Tap to select a photo from your gallery</p>
-          <div style="margin-top:12px;padding:8px 16px;background:rgba(124,58,237,0.15);border:1px solid rgba(124,58,237,0.3);border-radius:50px;display:inline-block;font-size:13px;color:var(--accent2);font-weight:600">📁 Browse Photos</div>
+          <p>Tap to select from gallery</p>
+          <div style="margin-top:10px;padding:6px 16px;background:rgba(124,58,237,0.15);border:1px solid rgba(124,58,237,0.3);border-radius:50px;display:inline-block;font-size:12px;color:var(--accent2);font-weight:700">Browse Photos</div>
         </div>
-        <input type="file" id="eff-input" accept="image/*" style="display:none" onchange="handleEffectsUpload(this)">
       `}
+      <input type="file" id="eff-file" accept="image/*" style="display:none" onchange="loadEffectsImage(this)">
 
-      <div style="font-size:12px;font-weight:700;color:var(--muted);margin-bottom:10px;text-transform:uppercase;letter-spacing:1px;">Choose Effect</div>
-      <div class="effects-grid">
-        ${EFFECTS.map(e=>`
-          <div class="effect-tile ${selectedEffect===e.id?'selected':''}" onclick="selectEffect('${e.id}')">
-            ${effectsImage ? `<img class="ef-preview" src="${effectsImage}" style="filter:${e.filter}" alt="${e.name}">` : `<div style="width:100%;height:100%;background:var(--bg2)"></div>`}
-            <div class="ef-overlay">
-              <span class="ef-ico">${e.icon}</span>
-              <span class="ef-name">${e.name}</span>
-            </div>
+      <div style="font-size:12px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px">Choose Effect</div>
+      <div class="fx-grid">
+        ${EFFECTS.map(f => `
+          <div class="fx-btn ${currentEffect===f.id?'active':''}" onclick="applyEffect('${f.id}')">
+            <div class="fx-ico">${f.ico}</div>
+            <div class="fx-name">${f.name}</div>
           </div>
         `).join('')}
       </div>
 
-      <button class="apply-btn" id="apply-btn" ${!effectsImage?'disabled':''} onclick="applyEffect()">
-        ${!effectsImage ? '📷 Upload photo first' : '✨ Apply & Save Effect'}
-      </button>
-    </div>
-  `;
-  if (effectsImage) drawCanvas();
+      ${effectsImageData ? `
+        <button class="save-fx-btn" onclick="saveEffect()">⬇ Save Photo</button>
+      ` : ''}
+    </div>`;
+
+  if (effectsImageData) {
+    setTimeout(() => {
+      const canvas = document.getElementById('effects-canvas');
+      if (canvas) {
+        effectsCtx = canvas.getContext('2d');
+        const img = new Image();
+        img.onload = () => {
+          canvas.width = img.width;
+          canvas.height = img.height;
+          effectsCtx.drawImage(img, 0, 0);
+          applyEffect(currentEffect, false);
+        };
+        img.src = effectsImageData;
+      }
+    }, 50);
+  }
 }
 
-function handleEffectsUpload(input) {
+function loadEffectsImage(input) {
   const file = input.files[0];
   if (!file) return;
   const reader = new FileReader();
   reader.onload = e => {
-    effectsImage = e.target.result;
-    renderPage();
-    toast('Photo uploaded! Pick an effect ✨', 'success');
+    effectsImageData = e.target.result;
+    currentEffect = 'none';
+    renderPage('effects');
   };
   reader.readAsDataURL(file);
 }
 
-function changeEffectsImg() {
-  document.getElementById('eff-input').click();
-}
+function applyEffect(effectId, reRender = true) {
+  currentEffect = effectId;
+  if (!effectsCtx || !effectsImageData) return;
 
-function selectEffect(id) {
-  selectedEffect = id;
-  renderPage();
-}
-
-function drawCanvas() {
-  const canvas = document.getElementById('effects-canvas');
-  if (!canvas || !effectsImage) return;
-  const ef = EFFECTS.find(e=>e.id===selectedEffect) || EFFECTS[0];
+  const canvas = effectsCtx.canvas;
   const img = new Image();
   img.onload = () => {
     canvas.width = img.width;
     canvas.height = img.height;
-    const ctx = canvas.getContext('2d');
-    ctx.filter = ef.filter || 'none';
-    ctx.drawImage(img, 0, 0);
+    effectsCtx.drawImage(img, 0, 0);
+    const imageData = effectsCtx.getImageData(0, 0, canvas.width, canvas.height);
+    const d = imageData.data;
+
+    for (let i = 0; i < d.length; i += 4) {
+      let r = d[i], g = d[i+1], b = d[i+2];
+      switch (effectId) {
+        case 'bw': { const gray=(r+g+b)/3; d[i]=d[i+1]=d[i+2]=gray; break; }
+        case 'sepia': d[i]=Math.min(255,r*.393+g*.769+b*.189); d[i+1]=Math.min(255,r*.349+g*.686+b*.168); d[i+2]=Math.min(255,r*.272+g*.534+b*.131); break;
+        case 'vivid': d[i]=Math.min(255,r*1.3); d[i+1]=Math.min(255,g*1.3); d[i+2]=Math.min(255,b*1.3); break;
+        case 'warm': d[i]=Math.min(255,r*1.2); d[i+2]=Math.max(0,b*.8); break;
+        case 'cool': d[i+2]=Math.min(255,b*1.3); d[i]=Math.max(0,r*.85); break;
+        case 'vintage': { const gray=(r+g+b)/3; d[i]=Math.min(255,gray*.8+112*.2); d[i+1]=Math.min(255,gray*.8+66*.2); d[i+2]=Math.min(255,gray*.8+20*.2); break; }
+        case 'dramatic': { const gray=(r+g+b)/3; const c=gray>128?1.5:.5; d[i]=Math.min(255,r*c); d[i+1]=Math.min(255,g*c); d[i+2]=Math.min(255,b*c); break; }
+        case 'fade': d[i]=r*.7+255*.3; d[i+1]=g*.7+255*.3; d[i+2]=b*.7+255*.3; break;
+        case 'neon': d[i]=Math.min(255,r+50); d[i+2]=Math.min(255,b+80); d[i+1]=Math.max(0,g-30); break;
+        case 'invert': d[i]=255-r; d[i+1]=255-g; d[i+2]=255-b; break;
+        case 'bright': d[i]=Math.min(255,r+50); d[i+1]=Math.min(255,g+50); d[i+2]=Math.min(255,b+50); break;
+        case 'dark': d[i]=Math.max(0,r-60); d[i+1]=Math.max(0,g-60); d[i+2]=Math.max(0,b-60); break;
+        case 'pink': d[i]=Math.min(255,r+40); d[i+2]=Math.min(255,b+30); d[i+1]=Math.max(0,g-20); break;
+        case 'blur': { if(i>canvas.width*4 && i<d.length-canvas.width*4) { d[i]=(d[i-4]+d[i]+d[i+4])/3; d[i+1]=(d[i-3]+d[i+1]+d[i+5])/3; d[i+2]=(d[i-2]+d[i+2]+d[i+6])/3; } break; }
+        case 'sharp': { const sh=d[i]*5-d[i-4]-d[i+4]-d[i-canvas.width*4]-d[i+canvas.width*4]; d[i]=Math.min(255,Math.max(0,sh)); break; }
+      }
+    }
+    effectsCtx.putImageData(imageData, 0, 0);
+    // Update fx buttons
+    document.querySelectorAll('.fx-btn').forEach(btn => {
+      const name = btn.querySelector('.fx-name')?.textContent;
+      const fx = EFFECTS.find(f => f.name === name);
+      btn.classList.toggle('active', fx?.id === effectId);
+    });
   };
-  img.src = effectsImage;
+  img.src = effectsImageData;
 }
 
-function applyEffect() {
-  if (!effectsImage) { toast('Upload a photo first!', 'error'); return; }
+function saveEffect() {
   const canvas = document.getElementById('effects-canvas');
-  const ef = EFFECTS.find(e=>e.id===selectedEffect) || EFFECTS[0];
-  if (!canvas) { toast('Error applying effect', 'error'); return; }
-  const img2 = new Image();
-  img2.onload = () => {
-    canvas.width = img2.width;
-    canvas.height = img2.height;
-    const ctx = canvas.getContext('2d');
-    ctx.filter = ef.filter || 'none';
-    ctx.drawImage(img2, 0, 0);
-    const dataUrl = canvas.toDataURL('image/jpeg', 0.92);
-    addToGallery(dataUrl, `${ef.name} effect applied`, 'Effect');
-    toast(`${ef.name} effect saved! 🎨`, 'success');
-  };
-  img2.src = effectsImage;
+  if (!canvas) return;
+  const a = document.createElement('a');
+  a.download = 'lumina-effect-' + Date.now() + '.png';
+  a.href = canvas.toDataURL('image/png');
+  a.click();
+  toast('Photo saved! ✅', 'success');
+  addToGallery(canvas.toDataURL('image/png'), 'Photo Effect: ' + currentEffect, currentEffect);
 }
 
-// ==================== VOICE ==================== 
+// ===== VOICE =====
 function renderVoice(c) {
   c.innerHTML = `
     <div class="voice-page">
-      <div class="voice-hero">
-        <h2>🗣 Voice AI</h2>
-        <p>Convert any text to natural speech — free, 8 languages</p>
+      <div class="page-header" style="padding:0 0 16px">
+        <div>
+          <div class="create-title">🎙 Voice AI</div>
+          <div class="create-sub">Convert any text to speech</div>
+        </div>
+        <span class="badge-free">🆓 Free</span>
       </div>
 
-      <div class="voice-input-box">
-        <textarea id="voice-text" placeholder="Type anything you want to hear... e.g. Hello! I am LuminaAI, your creative AI companion." rows="4">${voiceText||''}</textarea>
+      <div class="voice-input-wrap">
+        <textarea id="voice-text" class="voice-textarea"
+          placeholder="Type anything to hear it spoken aloud...&#10;&#10;Supports 8 languages!"
+          rows="5"></textarea>
       </div>
 
-      <div style="font-size:12px;font-weight:700;color:var(--muted);margin-bottom:8px;text-transform:uppercase;letter-spacing:1px;">Language</div>
-      <div class="voice-langs">
-        ${LANGUAGES.map(l=>`<div class="lang-chip ${selectedLang===l.code?'active':''}" onclick="selectLang('${l.code}')">${l.name}</div>`).join('')}
+      <div style="font-size:12px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px">Language</div>
+      <div class="lang-grid" style="margin-bottom:16px">
+        ${LANGS.map(l => `<div class="lang-btn ${currentLang===l.code?'active':''}" onclick="selectLang('${l.code}')">${l.label}</div>`).join('')}
       </div>
 
       <div class="voice-controls">
-        <div class="voice-ctrl">
-          <label>⚡ Speed: <span id="rate-val">${voiceRate}x</span></label>
-          <input type="range" min="0.5" max="2" step="0.1" value="${voiceRate}" oninput="voiceRate=parseFloat(this.value);document.getElementById('rate-val').textContent=voiceRate+'x'">
+        <div class="ctrl-row">
+          <span class="ctrl-label">⚡ Speed</span>
+          <input type="range" class="voice-slider" min="0.5" max="2" step="0.1" value="${voiceRate}"
+            oninput="voiceRate=this.value;document.getElementById('rate-val').textContent=parseFloat(this.value).toFixed(1)+'x'">
+          <span class="ctrl-val" id="rate-val">${voiceRate}x</span>
         </div>
-        <div class="voice-ctrl">
-          <label>🎵 Pitch: <span id="pitch-val">${voicePitch}</span></label>
-          <input type="range" min="0.5" max="2" step="0.1" value="${voicePitch}" oninput="voicePitch=parseFloat(this.value);document.getElementById('pitch-val').textContent=voicePitch">
+        <div class="ctrl-row">
+          <span class="ctrl-label">🎵 Pitch</span>
+          <input type="range" class="voice-slider" min="0.5" max="2" step="0.1" value="${voicePitch}"
+            oninput="voicePitch=this.value;document.getElementById('pitch-val').textContent=parseFloat(this.value).toFixed(1)">
+          <span class="ctrl-val" id="pitch-val">${voicePitch}</span>
         </div>
       </div>
 
@@ -976,249 +942,210 @@ function renderVoice(c) {
         ${isSpeaking ? '⏹ Stop Speaking' : '▶ Speak Now'}
       </button>
 
-      <div style="margin-top:16px;padding:14px;background:var(--bg3);border-radius:14px;border:1px solid var(--border);">
-        <div style="font-size:12px;color:var(--muted);font-weight:700;margin-bottom:8px;text-transform:uppercase;letter-spacing:1px;">Quick Phrases</div>
-        <div style="display:flex;flex-wrap:wrap;gap:8px;">
-          ${['Hello World!','Welcome to LuminaAI!','AI art is amazing!','Create something beautiful today','The future is now'].map(p=>`
-            <div onclick="document.getElementById('voice-text').value='${p}'" style="padding:7px 12px;background:rgba(124,58,237,0.12);border:1px solid rgba(124,58,237,0.2);border-radius:50px;font-size:12px;color:var(--accent2);cursor:pointer;font-weight:600">${p}</div>
-          `).join('')}
+      <div style="margin-top:16px;padding:14px;background:var(--bg3);border-radius:var(--radius);border:1px solid var(--border)">
+        <div style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px">Quick Phrases</div>
+        <div class="scroll-row">
+          ${['Hello World! 👋', 'Welcome to LuminaAI ✨', 'This is amazing! 🎉', 'AI is the future 🚀', 'Beautiful sunset 🌅'].map(p =>
+            `<div class="style-chip" onclick="document.getElementById('voice-text').value='${p}'">${p}</div>`
+          ).join('')}
         </div>
       </div>
-    </div>
-  `;
+    </div>`;
 }
 
-let voiceText = '';
-function selectLang(code) { selectedLang = code; renderPage(); }
+function selectLang(code) {
+  currentLang = code;
+  document.querySelectorAll('.lang-btn').forEach(b => {
+    b.classList.toggle('active', b.textContent.includes(LANGS.find(l=>l.code===code)?.label.split(' ')[1]||''));
+  });
+}
+
 function toggleSpeak() {
-  voiceText = document.getElementById('voice-text')?.value?.trim() || '';
-  if (!voiceText) { toast('Type some text first!', 'error'); return; }
   if (isSpeaking) {
-    window.speechSynthesis.cancel();
+    speechSynthesis.cancel();
     isSpeaking = false;
     const btn = document.getElementById('speak-btn');
-    if (btn) { btn.textContent = '▶ Speak Now'; btn.classList.remove('speaking'); }
+    if (btn) { btn.classList.remove('speaking'); btn.innerHTML = '▶ Speak Now'; }
     return;
   }
-  if (!window.speechSynthesis) { toast('Voice not supported in this browser', 'error'); return; }
-  const utt = new SpeechSynthesisUtterance(voiceText);
-  utt.lang = selectedLang;
-  utt.rate = voiceRate;
-  utt.pitch = voicePitch;
-  utt.onstart = () => {
+  const text = document.getElementById('voice-text')?.value?.trim();
+  if (!text) { toast('Enter some text first!', 'info'); return; }
+
+  const utter = new SpeechSynthesisUtterance(text);
+  utter.lang = currentLang;
+  utter.rate = parseFloat(voiceRate);
+  utter.pitch = parseFloat(voicePitch);
+  utter.onstart = () => {
     isSpeaking = true;
     const btn = document.getElementById('speak-btn');
-    if (btn) { btn.textContent = '⏹ Stop Speaking'; btn.classList.add('speaking'); }
-    toast('Speaking... 🗣', 'info');
+    if (btn) { btn.classList.add('speaking'); btn.innerHTML = '⏹ Stop Speaking'; }
   };
-  utt.onend = () => {
+  utter.onend = utter.onerror = () => {
     isSpeaking = false;
     const btn = document.getElementById('speak-btn');
-    if (btn) { btn.textContent = '▶ Speak Now'; btn.classList.remove('speaking'); }
+    if (btn) { btn.classList.remove('speaking'); btn.innerHTML = '▶ Speak Now'; }
   };
-  utt.onerror = () => { isSpeaking = false; toast('Voice error. Try again.', 'error'); };
-  window.speechSynthesis.speak(utt);
+  speechSynthesis.speak(utter);
+  toast('🎙 Speaking...', 'success');
 }
 
-// ==================== EXPLORE ====================
+// ===== EXPLORE =====
 function renderExplore(c) {
+  const prompts = EXPLORE_PROMPTS[exploreCategory] || EXPLORE_PROMPTS.trending;
   c.innerHTML = `
     <div class="explore-page">
-      <div class="explore-search">
-        <div class="search-input-wrap">
-          <span style="font-size:16px">🔍</span>
-          <input type="text" id="explore-q" placeholder="Search art styles, themes..." onkeydown="if(event.key==='Enter')doSearch()">
-        </div>
-        <button class="search-btn" onclick="doSearch()">Go</button>
+      <div class="page-header" style="padding:0 0 12px">
+        <div class="logo">🔭 Explore</div>
+        <span class="badge-free">🆓 Free</span>
       </div>
-
-      <div class="category-tabs" id="cat-tabs">
-        ${EXPLORE_CATS.map(c=>`<div class="cat-tab ${exploreCat===c.name?'active':''}" onclick="setExploreCat('${c.name}')">${c.emoji} ${c.name}</div>`).join('')}
+      <div class="cat-chips">
+        ${EXPLORE_CATS.map(cat => `<div class="cat-chip ${exploreCategory===cat.id?'active':''}" onclick="setCategory('${cat.id}')">${cat.label}</div>`).join('')}
       </div>
-
-      <div style="margin-bottom:12px;display:flex;align-items:center;justify-content:space-between;">
-        <span style="font-size:14px;font-weight:700">${exploreCat} Art</span>
-        <span style="font-size:12px;color:var(--muted)">Real AI Generated</span>
+      <div class="explore-grid" id="explore-grid">
+        ${prompts.map((p, i) => {
+          const seed = 5000 + i + (exploreCategory.length * 100);
+          const url = pUrl(p, 400, 400, seed);
+          return `
+          <div class="explore-card" onclick="openLightbox('${url}')">
+            <div class="explore-img">
+              <div class="shimmer" id="exp-sh-${i}"></div>
+              <img src="${url}" loading="lazy"
+                onload="this.classList.add('loaded');document.getElementById('exp-sh-${i}')?.remove()"
+                onerror="this.src='${pUrl(p, 400, 400, seed+500)}'"
+                alt="${p}">
+            </div>
+            <div class="explore-info">
+              <div class="explore-title">${p.substring(0,28)}${p.length>28?'...':''}</div>
+              <div class="explore-style">${EXPLORE_CATS.find(c=>c.id===exploreCategory)?.label||'AI Art'}</div>
+            </div>
+          </div>`}).join('')}
       </div>
-
-      <div class="explore-grid" id="explore-grid"></div>
-    </div>
-  `;
-  loadExploreImages();
+    </div>`;
 }
 
-function setExploreCat(cat) {
-  exploreCat = cat;
-  renderPage();
+function setCategory(cat) {
+  exploreCategory = cat;
+  renderPage('explore');
 }
 
-function doSearch() {
-  const q = document.getElementById('explore-q')?.value?.trim();
-  if (!q) return;
-  const grid = document.getElementById('explore-grid');
-  if (!grid) return;
-  grid.innerHTML = '';
-  const prompts = [
-    `${q} digital art detailed`,
-    `${q} fantasy illustration`,
-    `${q} photorealistic render`,
-    `${q} anime art style`,
-  ];
-  prompts.forEach((p, i) => {
-    const card = document.createElement('div');
-    card.className = 'explore-card';
-    card.innerHTML = `<div class="shimmer" style="width:100%;height:100%"></div>`;
-    const url = pUrl(p, 512, 512, 8000+i+Math.floor(Math.random()*1000));
-    card.onclick = () => openLightbox(url);
-    grid.appendChild(card);
-    const img = new Image();
-    let retries = 0;
-    const load = () => { img.src = url + `&_r=${retries}`; };
-    img.onload = () => {
-      card.innerHTML = `<img src="${img.src}" alt="${q}"><div class="exp-overlay"><span class="exp-label">${q}</span></div>`;
-    };
-    img.onerror = () => {
-      if (retries < 1) { retries++; setTimeout(load, 5000); }
-      else card.innerHTML = `<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:24px">🎨</div>`;
-    };
-    load();
-  });
-  toast(`Searching: ${q} 🔍`, 'info');
-}
-
-function loadExploreImages() {
-  const grid = document.getElementById('explore-grid');
-  if (!grid) return;
-  const items = EXPLORE_ITEMS.filter(i=>i.cat===exploreCat);
-  const extra = items.length < 6 ? EXPLORE_ITEMS.slice(0,4) : [];
-  const all = [...items, ...extra].slice(0,8);
-  all.forEach((item, i) => {
-    const seed = 3000 + EXPLORE_CATS.findIndex(c=>c.name===exploreCat)*100 + i;
-    const url = pUrl(item.p, 512, 512, seed);
-    const card = document.createElement('div');
-    card.className = 'explore-card';
-    card.innerHTML = `<div class="shimmer" style="width:100%;height:100%"></div>`;
-    card.onclick = () => openLightbox(url);
-    grid.appendChild(card);
-    const img = new Image();
-    let retries = 0;
-    const load = () => { img.src = url + `&_r=${retries}`; };
-    img.onload = () => {
-      card.innerHTML = `<img src="${img.src}" alt="${item.label}"><div class="exp-overlay"><span class="exp-label">${item.label}</span></div>`;
-    };
-    img.onerror = () => {
-      if (retries < 1) { retries++; setTimeout(load, 5000); }
-      else card.innerHTML = `<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;gap:4px;flex-direction:column;"><div style="font-size:24px">🎨</div><div style="font-size:9px;color:var(--muted);text-align:center;padding:4px">${item.label}</div></div>`;
-    };
-    load();
-  });
-}
-
-// ==================== GALLERY ====================
+// ===== GALLERY =====
 function renderGallery(c) {
+  const count = gallery.length;
   c.innerHTML = `
     <div class="gallery-page">
-      <div class="gallery-hdr">
-        <h2>🖼 My Gallery</h2>
-        ${gallery.length > 0 ? `<button class="clear-btn" onclick="clearGallery()">🗑 Clear All</button>` : ''}
-      </div>
-      <div style="font-size:13px;color:var(--muted);margin-bottom:16px;">${gallery.length} image${gallery.length!==1?'s':''} saved locally</div>
-      ${gallery.length === 0 ? `
-        <div class="gallery-empty">
-          <div class="empty-ico">🎨</div>
-          <h3>No images yet</h3>
-          <p>Generate AI images and save them to your gallery</p>
-          <button class="btn-primary" style="margin-top:20px" onclick="setPage('create')">✨ Create First Image</button>
+      <div class="page-header" style="padding:0 0 16px">
+        <div>
+          <div class="create-title">🖼 My Gallery</div>
+          <div class="create-sub">Your saved creations</div>
         </div>
-      ` : `
+        ${count > 0 ? `<button onclick="clearGallery()" style="background:rgba(239,68,68,0.15);border:1px solid rgba(239,68,68,0.3);border-radius:10px;padding:6px 12px;color:#ef4444;font-size:11px;font-weight:700;cursor:pointer">Clear All</button>` : ''}
+      </div>
+
+      ${count > 0 ? `
+        <div class="gallery-stats">
+          <div class="g-stat"><div class="g-stat-num">${count}</div><div class="g-stat-lbl">Images</div></div>
+          <div class="g-stat"><div class="g-stat-num">${new Set(gallery.map(g=>g.style)).size}</div><div class="g-stat-lbl">Styles</div></div>
+          <div class="g-stat"><div class="g-stat-num">${gallery[0]?.date||'—'}</div><div class="g-stat-lbl">Latest</div></div>
+        </div>
         <div class="gallery-grid">
-          ${[...gallery].reverse().map((item,i) => `
-            <div class="gallery-item" onclick="openLightbox('${item.url.replace(/'/g,"\\'")}')">
-              <img src="${item.url}" alt="${item.prompt}" loading="lazy">
-              <button class="g-del" onclick="event.stopPropagation();deleteGallery(${gallery.length-1-i})">✕</button>
-              <div class="g-label">${item.style||'AI'}</div>
+          ${gallery.map((item, i) => `
+            <div class="gallery-item">
+              <img src="${item.url}" alt="${item.prompt}"
+                loading="lazy"
+                onclick="openLightbox('${item.url}')"
+                onerror="this.style.display='none'">
+              <button class="del-btn" onclick="deleteGallery(${i})">✕</button>
+              <div class="g-label">${item.prompt?.substring(0,20)||'AI Image'}...</div>
             </div>
           `).join('')}
         </div>
+      ` : `
+        <div class="gallery-empty">
+          <div class="empty-ico">🖼</div>
+          <h3>No images yet</h3>
+          <p>Generate images in the Create tab and save them to your gallery!</p>
+          <button class="gen-btn" style="max-width:200px;margin:16px auto 0" onclick="navigate('create')">✨ Create Now</button>
+        </div>
       `}
-    </div>
-  `;
+    </div>`;
 }
 
-// ==================== PROFILE ====================
-function renderProfile(c) {
-  c.innerHTML = `
-    <div class="profile-page">
-      <div class="profile-hero">
-        <div class="profile-avatar">🎨</div>
-        <div class="profile-name">Creative Artist</div>
-        <div class="profile-sub">LuminaAI Studio Member</div>
-        <div class="badge-free" style="display:inline-block">✦ FREE FOREVER</div>
-      </div>
-
-      <div class="profile-stats">
-        <div class="stat-card">
-          <div class="stat-num">${gallery.length}</div>
-          <div class="stat-label">Created</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-num">∞</div>
-          <div class="stat-label">Remaining</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-num">Free</div>
-          <div class="stat-label">Plan</div>
-        </div>
-      </div>
-
-      <div style="font-size:12px;font-weight:700;color:var(--muted);margin-bottom:10px;text-transform:uppercase;letter-spacing:1px;">Features</div>
-      <div class="settings-list">
-        ${[
-          {ico:'✨',bg:'rgba(124,58,237,0.15)',label:'AI Image Generator',sub:'Unlimited free generations',page:'create'},
-          {ico:'🎨',bg:'rgba(236,72,153,0.15)',label:'Photo Effects',sub:'12+ instant filters',page:'effects'},
-          {ico:'🗣',bg:'rgba(6,182,212,0.15)',label:'Voice AI',sub:'8 languages, text to speech',page:'voice'},
-          {ico:'🔭',bg:'rgba(16,185,129,0.15)',label:'Explore',sub:'Browse real AI art',page:'explore'},
-        ].map(s=>`
-          <div class="setting-row" onclick="setPage('${s.page}')">
-            <div class="setting-row-left">
-              <div class="setting-ico" style="background:${s.bg}">${s.ico}</div>
-              <div>
-                <div class="setting-label">${s.label}</div>
-                <div class="setting-sub">${s.sub}</div>
-              </div>
-            </div>
-            <span class="setting-arrow">›</span>
-          </div>
-        `).join('')}
-      </div>
-
-      <div style="margin-top:20px;padding:16px;background:linear-gradient(135deg,rgba(124,58,237,0.1),rgba(6,182,212,0.1));border:1px solid rgba(124,58,237,0.2);border-radius:var(--radius);text-align:center;">
-        <div style="font-size:20px;margin-bottom:6px">🚀</div>
-        <div style="font-size:14px;font-weight:700;margin-bottom:4px">Powered by Pollinations.ai</div>
-        <div style="font-size:12px;color:var(--muted)">Real AI image generation, completely free with no limits</div>
-      </div>
-    </div>
-  `;
+function deleteGallery(i) {
+  gallery.splice(i, 1);
+  saveGallery();
+  renderPage('gallery');
+  toast('Removed from gallery', 'info');
 }
 
-// ==================== ROUTING ====================
-// Override setPage to handle effects and voice
-const _setPage = setPage;
-window.setPage = function(page) {
-  currentPage = page;
-  ['home','explore','create','gallery','profile'].forEach(p => {
-    const el = document.getElementById(`nav-${p}`);
-    if (el) el.classList.toggle('active', p === page);
-  });
-  const c = document.getElementById('page-container');
-  if (page === 'effects') { renderEffects(c); }
-  else if (page === 'voice') { renderVoice(c); }
-  else { renderPage(); }
-  document.getElementById('page-container').scrollTop = 0;
+function clearGallery() {
+  if (confirm('Clear all saved images?')) {
+    gallery = [];
+    saveGallery();
+    renderPage('gallery');
+    toast('Gallery cleared', 'info');
+  }
+}
+
+// ===== LIGHTBOX =====
+function openLightbox(url) {
+  currentLightboxUrl = url;
+  document.getElementById('lightbox-img').src = url;
+  document.getElementById('lightbox').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function closeLightbox() {
+  document.getElementById('lightbox').classList.remove('open');
+  document.body.style.overflow = '';
+}
+function downloadFromLightbox() { downloadImage(currentLightboxUrl); }
+function shareFromLightbox() { shareImage(currentLightboxUrl, 'LuminaAI creation'); }
+
+// ===== NAV FIX - add Voice tab =====
+// Override nav to include voice
+document.addEventListener('DOMContentLoaded', () => {
+  const nav = document.getElementById('nav');
+  nav.innerHTML = `
+    <button class="nav-btn active" onclick="navigate('home')" id="nav-home">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+      Feed
+    </button>
+    <button class="nav-btn" onclick="navigate('create')" id="nav-create">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+      Create
+    </button>
+    <button class="nav-btn" onclick="navigate('effects')" id="nav-effects">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+      Effects
+    </button>
+    <button class="nav-btn" onclick="navigate('voice')" id="nav-voice">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>
+      Voice
+    </button>
+    <button class="nav-btn" onclick="navigate('explore')" id="nav-explore">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      Explore
+    </button>
+    <button class="nav-btn" onclick="navigate('gallery')" id="nav-gallery">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+      Gallery
+    </button>`;
+
+  renderPage('home');
+});
+
+// Override renderPage to include voice
+const _origRenderPage = window.renderPage;
+window.renderPage = function(page) {
+  const p = document.getElementById('page');
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('nav-' + page)?.classList.add('active');
+  if (page === 'home') renderHome(p);
+  else if (page === 'create') renderCreate(p);
+  else if (page === 'effects') renderEffects(p);
+  else if (page === 'voice') renderVoice(p);
+  else if (page === 'explore') renderExplore(p);
+  else if (page === 'gallery') renderGallery(p);
 };
-
-// INIT
-setPage('home');
 </script>
 </body>
 </html>
