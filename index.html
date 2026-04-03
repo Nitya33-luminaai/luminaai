@@ -419,7 +419,7 @@ let genRetries = 0;
 function pUrl(prompt, w, h, seed) {
   const enc = encodeURIComponent(prompt.trim().substring(0,200));
   const s = seed || Math.floor(Math.random()*99999);
-  return `https://image.pollinations.ai/prompt/${enc}?width=${w}&height=${h}&seed=${s}&nologo=true&model=flux`;
+  return `https://image.pollinations.ai/prompt/${enc}?width=${w}&height=${h}&seed=${s}&nologo=true`;
 }
 
 // ==================== GALLERY ====================
@@ -805,13 +805,13 @@ function generateImage() {
   };
 
   img.onerror = () => {
-    if (genRetries < 2) {
+    if (genRetries < 3) {
       genRetries++;
       const status = document.getElementById('gen-status');
       const sub = document.getElementById('gen-sub');
-      if (status) status.textContent = `Retrying... (attempt ${genRetries+1}/3)`;
-      if (sub) sub.textContent = 'Slow connection? Hang on...';
-      setTimeout(() => tryLoad(genRetries), 5000);
+      if (status) status.textContent = `Retrying... (attempt ${genRetries+1}/4)`;
+      if (sub) sub.textContent = 'Server busy — retrying in 15 seconds... ☕';
+      setTimeout(() => tryLoad(genRetries), 15000);
     } else {
       clearInterval(interval);
       resultArea.innerHTML = `
